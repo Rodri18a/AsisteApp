@@ -239,6 +239,7 @@
             <button class="tab-btn" onclick="switchTab('config')">Config</button>
         </div>
 
+        <!-- VIEW 1: PASE DE LISTA PRÁCTICAS -->
         <div id="view-asistencia" class="view active">
             <div class="action-bar">
                 <div class="date-select-wrapper">
@@ -250,6 +251,7 @@
             <div class="player-list" id="attendance-players-container"></div>
         </div>
 
+        <!-- VIEW 2: SUGERENCIA DE CITADOS -->
         <div id="view-citados" class="view">
             <div class="generic-config-row">
                 <div class="input-group">
@@ -275,6 +277,7 @@
             </button>
         </div>
 
+        <!-- VIEW 3: REGISTRO DE PARTIDOS JUGADOS -->
         <div id="view-partidos" class="view">
             <div class="action-bar">
                 <div class="date-select-wrapper">
@@ -286,6 +289,7 @@
             <div class="player-list" id="match-players-container"></div>
         </div>
 
+        <!-- VIEW 4: RENDIMIENTO GENERAL -->
         <div id="view-rendimiento" class="view">
             <div class="stats-grid">
                 <div class="stat-card">
@@ -304,6 +308,7 @@
                 </div>
             </div>
 
+            <!-- Resumen de Tarjetas del Equipo -->
             <div class="cards-summary-box">
                 <span class="card-mini-lbl">⚠️ Amarillas: <span id="team-total-yellow" style="color:#f59f00;">0</span></span>
                 <span class="card-mini-lbl">🔷 Azules: <span id="team-total-blue" style="color:#1c7ed6;">0</span></span>
@@ -326,6 +331,7 @@
             </div>
         </div>
 
+        <!-- VIEW 5: CONFIGURACIÓN -->
         <div id="view-config" class="view">
             <div class="config-section">
                 <h3>Crear Nuevo Plantel</h3>
@@ -445,7 +451,6 @@
                 { id: "p_11", firstname: "Juan", lastname: "Moreira", ci: "6.163.136.1", birthdate: "2015-08-23", medical: "2025-07-09", number: "12", phone: "", notes: "" }
             ];
 
-            // 43 Prácticas únicas extraídas de los dos segmentos sin duplicar la transición de abril
             const demoDates = [
                 "mar 27/01", "jue 29/01", "vie 30/01", "mar 03/02", "mié 04/02", "vie 06/02", "mar 10/02", "jue 12/02", "vie 13/02",
                 "mar 17/02", "jue 19/02", "vie 20/02", "mar 24/02", "jue 26/02", "vie 27/02", "mar 03/03", "jue 05/03", "mar 10/03",
@@ -454,39 +459,22 @@
                 "jue 14/05", "vie 15/05", "mar 19/05", "jue 21/05", "sáb 23/05", "mar 26/05", "jue 28/05"
             ];
 
-            // Matriz corregida: Cualquier Celda con Tick (Verde o Rojo) = 1. Celda Vacía = 0.
             const rawMatrix = {
-                // Benjamin G
                 "p_15": [1,1,0,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,0,1,0,1,1,1,0,1,0,1,0],
-                // Benjamin M
                 "p_12": [1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,0],
-                // Kevin
                 "p_1":  [1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1],
-                // Leandro
                 "p_16": [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,0,0,1,1,1,1,1],
-                // Manuel
                 "p_13": [1,1,0,1,1,1,1,0,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0],
-                // Mateo
                 "p_4":  [1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1],
-                // Ramiro
                 "p_9":  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1],
-                // Renato (Los tildes rojos en abril/mayo pasan a contar como asistencia = 1)
                 "p_8":  [1,0,1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1],
-                // Santiago
                 "p_10": [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1],
-                // Silvestre
                 "p_7":  [1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1],
-                // Tadeo
                 "p_6":  [1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,0],
-                // Thiago C
                 "p_14": [1,1,0,0,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,0,1,0,1,0,0,0,1,0,0,0,0,1,0,0,1,1],
-                // Tiziano
                 "p_3":  [1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1],
-                // Tomas
                 "p_2":  [1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1],
-                // Valentino
                 "p_5":  [1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,0,0,0,1],
-                // Juan
                 "p_11": [1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1]
             };
 
@@ -570,7 +558,7 @@
                 selector.innerHTML = '';
                 dates.forEach(d => {
                     const opt = document.createElement('option');
-                    opt.value = d; opt.textContent = d; selector.appendChild(opt);
+                    opt.value = d; opt.textContent = "Práctica: " + d; selector.appendChild(opt);
                 });
                 if(dates.length > 0) selector.value = dates[dates.length - 1];
             }
