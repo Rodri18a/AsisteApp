@@ -215,14 +215,13 @@
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
         
         .list-item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f9f9f9; font-size: 14px; }
-        .list-actions { display: flex; gap: 12px; }
+        .list-actions { display: flex; gap: 12px; align-items: center; }
         .btn-edit-action { color: #2a5298; background: none; border: none; width: auto; font-weight: 600; font-size: 13px; padding: 0; cursor: pointer; height: auto; }
         .btn-del-action { color: #e53935; background: none; border: none; width: auto; font-weight: 600; font-size: 13px; padding: 0; cursor: pointer; height: auto; }
         .cancel-edit-lnk { display: block; text-align: center; color: #7f8c8d; font-size: 12px; margin-top: 8px; text-decoration: underline; cursor: pointer; }
         
         .row-controls-partido { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
 
-        /* Formulario Modular Partido */
         .match-creator-box { background: #fdfdfd; border: 1px dashed #cbd5cb; padding: 12px; border-radius: 10px; margin-bottom: 12px; display: none; }
         .match-creator-box.active { display: block; }
     </style>
@@ -308,15 +307,24 @@
                 </div>
                 <div class="form-grid" style="margin-top: 6px;">
                     <div class="input-group">
+                        <label>Condición</label>
+                        <select id="new-match-condition">
+                            <option value="Local">Unión Local</option>
+                            <option value="Visitante">Visitante</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
                         <label>Categoría / Rama</label>
                         <select id="new-match-type">
                             <option value="Mixto">Mixto</option>
                             <option value="Femenino">Femenino</option>
                         </select>
                     </div>
-                    <div class="input-group">
-                        <label>Detalle Extra (Ej: Cancha)</label>
-                        <input type="text" id="new-match-extra" placeholder="Ej: Cancha Huracán">
+                </div>
+                <div class="form-grid" style="margin-top: 6px;">
+                    <div class="input-group" style="grid-column: span 2;">
+                        <label>Detalle Extra (Ej: Cancha Alternativa u Hora)</label>
+                        <input type="text" id="new-match-extra" placeholder="Ej: 15:30 hs">
                     </div>
                 </div>
                 <div style="display: flex; gap: 6px; margin-top: 10px;">
@@ -348,7 +356,6 @@
                 </div>
             </div>
 
-            <!-- Resumen de Tarjetas del Equipo -->
             <div class="cards-summary-box">
                 <span class="card-mini-lbl">⚠️ Amarillas: <span id="team-total-yellow" style="color:#f59f00;">0</span></span>
                 <span class="card-mini-lbl">🔷 Azules: <span id="team-total-blue" style="color:#1c7ed6;">0</span></span>
@@ -373,20 +380,36 @@
 
         <!-- VIEW 5: CONFIGURACIÓN -->
         <div id="view-config" class="view">
-            <!-- GESTIÓN DE EQUIPOS RIVALES (NUEVO) -->
-            <div class="config-section">
-                <h3>Gestión de Clubes de la Liga</h3>
+            <!-- GESTIÓN DE EQUIPOS RIVALES (EDITABLE Y CON UBICACIÓN) -->
+            <div class="config-section" id="club-form-section">
+                <h3 id="club-form-title">Registrar / Editar Club de la Liga</h3>
+                <input type="hidden" id="edit-club-index" value="">
                 <div class="form-grid">
-                    <input type="text" id="new-club-name" placeholder="Nombre del Club/Equipo">
-                    <select id="new-club-type">
-                        <option value="Mixto">Mixto</option>
-                        <option value="Femenino">Femenino</option>
-                        <option value="Ambos">Ambos (Mix/Fem)</option>
-                    </select>
+                    <div class="input-group">
+                        <label>Nombre del Club</label>
+                        <input type="text" id="new-club-name" placeholder="Ej: Huracán del Pinar">
+                    </div>
+                    <div class="input-group">
+                        <label>Modalidades</label>
+                        <select id="new-club-type">
+                            <option value="Mixto">Mixto</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Ambos">Ambos (Mix/Fem)</option>
+                        </select>
+                    </div>
                 </div>
-                <button class="btn-primary" style="margin-top: 6px; height: 36px; font-size: 13px;" onclick="addNewClubFromUI()">+ Registrar Club</button>
+                <div class="form-grid" style="margin-top: 4px;">
+                    <div class="input-group" style="grid-column: span 2;">
+                        <label>Dirección / Ubicación de la Cancha</label>
+                        <input type="text" id="new-club-location" placeholder="Ej: Av. Giannattasio Km 28.500, El Pinar">
+                    </div>
+                </div>
+                <div style="display:flex; gap: 6px; margin-top: 8px;">
+                    <button class="btn-primary" style="height: 36px; font-size: 13px;" id="btn-submit-club" onclick="saveClubProcess()">Guardar Club</button>
+                    <button class="btn-secondary" style="height: 36px; font-size: 13px; display:none; background:#eee; color:#333;" id="cancel-club-edit-btn" onclick="clearClubForm()">Cancelar</button>
+                </div>
                 
-                <div id="config-clubs-list" style="margin-top: 12px; max-height: 200px; overflow-y: auto; background: #fafafa; padding: 6px; border-radius: 8px;"></div>
+                <div id="config-clubs-list" style="margin-top: 12px; max-height: 220px; overflow-y: auto; background: #fafafa; padding: 6px; border-radius: 8px;"></div>
             </div>
 
             <div class="config-section">
@@ -402,7 +425,7 @@
                 <input type="hidden" id="edit-player-id" value="">
                 
                 <div class="form-grid">
-                    <input type="text" id="player-firstname" placeholder="Nombre (ej: Renato)">
+                    <input type="text" id="player-firstname" placeholder="Nombre">
                     <input type="text" id="player-lastname" placeholder="Apellido">
                 </div>
                 <div class="form-grid">
@@ -434,7 +457,7 @@
                 <div style="margin-bottom: 8px;">
                     <div class="input-group">
                         <label>Observaciones / Contactos extra</label>
-                        <textarea id="player-notes" placeholder="Ej: Mamá 099111222 / Papá 098333444"></textarea>
+                        <textarea id="player-notes" placeholder="Ej: Mamá 099111222"></textarea>
                     </div>
                 </div>
                 <button class="btn-primary" style="margin-top: 10px;" id="btn-submit-player" onclick="savePlayerProcess()">Guardar Jugador en Plantel</button>
@@ -462,7 +485,7 @@
         let currentTeam = "";
         let players = [], dates = [], attendance = {};
         let matchesList = [], matchesData = {};
-        let clubsLeague = []; // Listado Global de Equipos de la Liga
+        let clubsLeague = []; 
         let finalSelection = {};
         let rankedPlayersList = [];
 
@@ -476,7 +499,7 @@
                     loadOfficialData();
                     return;
                 }
-                if (clubsLeague.length === 0) loadDefaultClubs();
+                if (clubsLeague.length === 0 || !clubsLeague[0].hasOwnProperty('location')) loadDefaultClubs();
                 loadTeamSpecificData(currentTeam);
                 renderTeamSelector();
             } catch(e) {
@@ -487,25 +510,25 @@
 
         function loadDefaultClubs() {
             clubsLeague = [
-                { name: "Unión de Empalme Olmos", type: "Ambos" },
-                { name: "Academia Forlán", type: "Mixto" },
-                { name: "Albatros", type: "Mixto" },
-                { name: "Atlanta Jr", type: "Mixto" },
-                { name: "Atlántida Juniors", type: "Ambos" },
-                { name: "Atlántida Verde", type: "Mixto" },
-                { name: "El Timón San Luis", type: "Femenino" },
-                { name: "Escuela La Costa", type: "Mixto" },
-                { name: "Estudiantil San Luis", type: "Mixto" },
-                { name: "Huracán del Pinar", type: "Ambos" },
-                { name: "La Floresta", type: "Femenino" },
-                { name: "La Marea Junior", type: "Mixto" },
-                { name: "Neptunia Country Club", type: "Ambos" },
-                { name: "Neptunia Norte", type: "Mixto" },
-                { name: "Parque del Plata", type: "Ambos" },
-                { name: "Pinar 99", type: "Mixto" },
-                { name: "Progreso", type: "Mixto" },
-                { name: "Renca Junior", type: "Mixto" },
-                { name: "Unidos Podemos", type: "Femenino" }
+                { name: "Unión de Empalme Olmos", type: "Ambos", location: "Cancha Unión, Empalme Olmos" },
+                { name: "Academia Forlán", type: "Mixto", location: "Complejo Familia Forlán" },
+                { name: "Albatros", type: "Mixto", location: "Cancha de Albatros" },
+                { name: "Atlanta Jr", type: "Mixto", location: "Sede Atlanta Junior" },
+                { name: "Atlántida Juniors", type: "Ambos", location: "Ruta 11 Km 163, Atlántida" },
+                { name: "Atlántida Verde", type: "Mixto", location: "Predio Atlántida" },
+                { name: "El Timón San Luis", type: "Femenino", location: "Club El Timón, San Luis" },
+                { name: "Escuela La Costa", type: "Mixto", location: "Complejo de la Costa" },
+                { name: "Estudiantil San Luis", type: "Mixto", location: "Cancha Estudiantil, San Luis" },
+                { name: "Huracán del Pinar", type: "Ambos", location: "Av. Giannattasio Km 28.500, El Pinar" },
+                { name: "La Floresta", type: "Femenino", location: "Cancha La Floresta" },
+                { name: "La Marea Junior", type: "Mixto", location: "Cancha La Marea" },
+                { name: "Neptunia Country Club", type: "Ambos", location: "Ruta Interbalnearia Km 36, Neptunia" },
+                { name: "Neptunia Norte", type: "Mixto", location: "Neptunia Norte Campo 2" },
+                { name: "Parque del Plata", type: "Ambos", location: "Av. Mario Ferreira, Parque del Plata" },
+                { name: "Pinar 99", type: "Mixto", location: "Cancha Pinar 99" },
+                { name: "Progreso", type: "Mixto", location: "Estadio de Progreso" },
+                { name: "Renca Junior", type: "Mixto", location: "Cancha Renca" },
+                { name: "Unidos Podemos", type: "Femenino", location: "Predio Unidos Podemos" }
             ];
             clubsLeague.sort((a,b) => a.name.localeCompare(b.name));
             localStorage.setItem('tuliga_clubs_league', JSON.stringify(clubsLeague));
@@ -538,45 +561,17 @@
                 { id: "p_11", firstname: "Juan", lastname: "Moreira", ci: "6.163.136.1", birthdate: "2015-08-23", medical: "2025-07-09", number: "12", phone: "", notes: "" }
             ];
 
-            const demoDates = [
-                "mar 27/01", "jue 29/01", "vie 30/01", "mar 03/02", "mié 04/02", "vie 06/02", "mar 10/02", "jue 12/02", "vie 13/02",
-                "mar 17/02", "jue 19/02", "vie 20/02", "mar 24/02", "jue 26/02", "vie 27/02", "mar 03/03", "jue 05/03", "mar 10/03",
-                "jue 12/03", "mar 17/03", "jue 19/03", "vie 20/03", "mar 24/03", "jue 09/04", "vie 10/04", "mar 14/04", "mié 15/04",
-                "sáb 18/04", "mar 21/04", "jue 23/04", "mar 28/04", "jue 30/04", "vie 01/05", "mar 05/05", "vie 08/05", "mar 12/05",
-                "jue 14/05", "vie 15/05", "mar 19/05", "jue 21/05", "sáb 23/05", "mar 26/05", "jue 28/05"
-            ];
-
-            const rawMatrix = {
-                "p_15": [1,1,0,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,0,1,0,1,1,1,0,1,0,1,0],
-                "p_12": [1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,0],
-                "p_1":  [1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1],
-                "p_16": [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,0,0,1,1,1,1,1],
-                "p_13": [1,1,0,1,1,1,1,0,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0],
-                "p_4":  [1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1],
-                "p_9":  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1],
-                "p_8":  [1,0,1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1],
-                "p_10": [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1],
-                "p_7":  [1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1],
-                "p_6":  [1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,0],
-                "p_14": [1,1,0,0,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,0,1,0,1,0,0,0,1,0,0,0,0,1,0,0,1,1],
-                "p_3":  [1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1],
-                "p_2":  [1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1],
-                "p_5":  [1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,0,0,0,1],
-                "p_11": [1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1]
-            };
-
+            const demoDates = ["mar 27/01", "jue 29/01"];
             const demoAttendance = {};
-            demoDates.forEach((d, idx) => {
+            demoDates.forEach(d => {
                 demoAttendance[d] = {};
-                officialPlayers.forEach(p => {
-                    demoAttendance[d][p.id] = rawMatrix[p.id][idx];
-                });
+                officialPlayers.forEach(p => { demoAttendance[d][p.id] = 1; });
             });
             
-            const demoMatches = ["2026-06-06 | vs Academia Forlán (Mixto)"];
-            const demoMatchesData = { "2026-06-06 | vs Academia Forlán (Mixto)": {} };
+            const demoMatches = ["2026-06-06 | vs Academia Forlán (Mixto) [Local]"];
+            const demoMatchesData = { "2026-06-06 | vs Academia Forlán (Mixto) [Local]": {} };
             officialPlayers.forEach(p => {
-                demoMatchesData["2026-06-06 | vs Academia Forlán (Mixto)"][p.id] = { present: 1, sancion: "Ninguna" };
+                demoMatchesData["2026-06-06 | vs Academia Forlán (Mixto) [Local]"][p.id] = { present: 1, sancion: "Ninguna" };
             });
 
             localStorage.setItem('tuliga_players_' + currentTeam, JSON.stringify(officialPlayers));
@@ -613,19 +608,13 @@
             if (!medicalDateStr) return `<span class="badge-meta badge-medical-expired">Sin Ficha</span>`;
             try {
                 const medicalDate = new Date(medicalDateStr + 'T00:00:00');
-                const today = new Date();
-                today.setHours(0,0,0,0);
+                const today = new Date(); today.setHours(0,0,0,0);
                 const diffTime = medicalDate - today;
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
                 if (diffDays < 0) return `<span class="badge-meta badge-medical-expired">Ficha Vencida</span>`;
                 if (diffDays <= 15) return `<span class="badge-meta badge-medical-warn">Vence en ${diffDays}d</span>`;
-                
-                const parts = medicalDateStr.split('-');
-                return `<span class="badge-meta badge-medical-ok">Ficha: ${parts[2]}/${parts[1]}</span>`;
-            } catch(e) {
-                return `<span class="badge-meta badge-medical-expired">Sin Ficha</span>`;
-            }
+                return `<span class="badge-meta badge-medical-ok">Ficha: ${medicalDateStr.split('-')[2]}/${medicalDateStr.split('-')[1]}</span>`;
+            } catch(e) { return `<span class="badge-meta badge-medical-expired">Sin Ficha</span>`; }
         }
 
         function calculateAge(birthdateStr) {
@@ -674,15 +663,13 @@
 
         function loadAttendanceForSelectedDate() {
             const selector = document.getElementById('session-date-select');
-            if (!selector) return;
-            const date = selector.value;
+            if (!selector) return; const date = selector.value;
             if (!date) {
                 document.getElementById('attendance-players-container').innerHTML = '<p style="text-align:center;color:#7f8c8d;font-size:14px;padding:20px;">No hay prácticas creadas.</p>';
                 document.getElementById('attendance-summary-bubble').innerHTML = 'Toca "+ Nueva" para arrancar.';
                 return;
             }
             if (!attendance[date]) attendance[date] = {};
-
             const container = document.getElementById('attendance-players-container');
             if (!container) return; container.innerHTML = '';
             let presentCount = 0;
@@ -692,32 +679,17 @@
                 const isPresent = attendance[date][p.id] === 1;
                 if (isPresent) presentCount++;
 
-                let totalP = 0, attendedP = 0;
-                dates.forEach(d => {
-                    if (attendance[d] && attendance[d][p.id] !== undefined) {
-                        totalP++; if (attendance[d][p.id] === 1) attendedP++;
-                    }
-                });
-                const pct = totalP > 0 ? Math.round((attendedP / totalP) * 100) : 100;
-
                 const row = document.createElement('div');
                 row.className = 'player-row ' + (isPresent ? 'present' : 'absent');
                 row.id = 'row-' + p.id;
-
-                const medicalBadge = getMedicalBadge(p.medical);
-                const camisaStr = p.number ? `<span class="badge-meta" style="background:#1e3c72; color:white;">#${p.number}</span>` : '';
-                const edadStr = p.birthdate ? `<span class="badge-meta">${calculateAge(p.birthdate)}</span>` : '';
-                const ciStr = p.ci ? `<span class="badge-meta" style="border: 1px solid #1e3c72; color: #1e3c72; background: none;">CI ${p.ci}</span>` : '';
 
                 row.innerHTML = `
                     <div class="player-info">
                         <span class="player-name">${p.lastname ? p.lastname + ' ' : ''}${p.firstname}</span>
                         <div class="player-meta-tag">
-                            ${camisaStr}
-                            ${ciStr}
-                            ${edadStr}
-                            ${medicalBadge}
-                            <span class="badge-meta">Asist: ${pct}%</span>
+                            ${p.number ? `<span class="badge-meta" style="background:#1e3c72; color:white;">#${p.number}</span>` : ''}
+                            ${p.ci ? `<span class="badge-meta" style="border: 1px solid #1e3c72; color: #1e3c72; background: none;">CI ${p.ci}</span>` : ''}
+                            ${getMedicalBadge(p.medical)}
                         </div>
                     </div>
                     <label class="attendance-switch">
@@ -728,46 +700,26 @@
                 container.appendChild(row);
             });
 
-            const summaryEl = document.getElementById('attendance-summary-bubble');
-            if (summaryEl) {
-                summaryEl.innerHTML = `<strong>Asistencias:</strong> ${presentCount} presentes de ${players.length} (${players.length > 0 ? Math.round((presentCount/players.length)*100) : 0}%).`;
-            }
+            document.getElementById('attendance-summary-bubble').innerHTML = `<strong>Asistencias:</strong> ${presentCount} presentes de ${players.length}.`;
         }
 
         function toggleAttendance(date, playerId, checkbox) {
-            const isChecked = checkbox.checked;
-            attendance[date][playerId] = isChecked ? 1 : 0;
-            saveData();
-            const row = document.getElementById('row-' + playerId);
-            if (row) row.className = 'player-row ' + (isChecked ? 'present' : 'absent');
-            
-            let presentCount = 0;
-            players.forEach(p => { if (attendance[date][p.id] === 1) presentCount++; });
-            const summaryEl = document.getElementById('attendance-summary-bubble');
-            if (summaryEl) summaryEl.innerHTML = `<strong>Asistencias:</strong> ${presentCount} presentes de ${players.length} (${Math.round((presentCount/players.length)*100)}%).`;
+            attendance[date][playerId] = checkbox.checked ? 1 : 0; saveData();
+            document.getElementById('row-' + playerId).className = 'player-row ' + (checkbox.checked ? 'present' : 'absent');
         }
 
         function toggleMatchCreator(show) {
             const el = document.getElementById('match-creator-form');
-            if (show) {
-                el.classList.add('active');
-                populateRivalDropdowns();
-            } else {
-                el.classList.remove('active');
-            }
+            if (show) { el.classList.add('active'); populateRivalDropdowns(); } else { el.classList.remove('active'); }
         }
 
         function populateRivalDropdowns() {
             const dropdown = document.getElementById('new-match-rival');
-            if(!dropdown) return;
-            dropdown.innerHTML = '';
-            
-            // Filtrar para no jugar contra uno mismo (Opcional, pero claro)
+            if(!dropdown) return; dropdown.innerHTML = '';
             clubsLeague.forEach(club => {
                 if(club.name !== "Unión de Empalme Olmos") {
                     const opt = document.createElement('option');
-                    opt.value = club.name;
-                    opt.textContent = `${club.name} (${club.type})`;
+                    opt.value = club.name; opt.textContent = `${club.name} (${club.type})`;
                     dropdown.appendChild(opt);
                 }
             });
@@ -776,163 +728,80 @@
         function saveStructuredMatch() {
             const rival = document.getElementById('new-match-rival').value;
             const dateVal = document.getElementById('new-match-date').value;
+            const cond = document.getElementById('new-match-condition').value;
             const type = document.getElementById('new-match-type').value;
             const extra = document.getElementById('new-match-extra').value.trim();
 
             if(!dateVal) { alert("Por favor, selecciona una fecha válida."); return; }
 
-            // Construir identificador limpio: AAAA-MM-DD | vs Rival (Rama)
-            const matchName = `${dateVal} | vs ${rival} (${type})${extra ? ' - ' + extra : ''}`;
-
-            if (matchesList.includes(matchName)) { alert("Este partido ya está agendado."); return; }
+            const matchName = `${dateVal} | vs ${rival} (${type}) [${cond}]${extra ? ' - ' + extra : ''}`;
+            if (matchesList.includes(matchName)) { alert("Este partido ya existe."); return; }
             
-            matchesList.push(matchName);
-            // Ordenar de más viejo a más nuevo
-            matchesList.sort();
-
+            matchesList.push(matchName); matchesList.sort();
             matchesData[matchName] = {};
-            players.forEach(p => {
-                matchesData[matchName][p.id] = { present: 0, sancion: "Ninguna" };
-            });
+            players.forEach(p => { matchesData[matchName][p.id] = { present: 0, sancion: "Ninguna" }; });
 
-            saveData();
-            populateDateSelector();
-            toggleMatchCreator(false);
+            saveData(); populateDateSelector(); toggleMatchCreator(false);
             document.getElementById('match-record-select').value = matchName;
             loadMatchRecordForSelected();
-
-            // Limpiar inputs
-            document.getElementById('new-match-date').value = "";
-            document.getElementById('new-match-extra').value = "";
         }
 
         function loadMatchRecordForSelected() {
             const selector = document.getElementById('match-record-select');
-            if (!selector) return;
-            const matchName = selector.value;
+            if (!selector) return; const matchName = selector.value;
             if (!matchName) {
-                document.getElementById('match-players-container').innerHTML = '<p style="text-align:center;color:#7f8c8d;font-size:14px;padding:20px;">No hay partidos registrados.</p>';
-                document.getElementById('match-summary-bubble').innerHTML = 'Toca "+ Definir Partido" para registrar uno nuevo.';
+                document.getElementById('match-players-container').innerHTML = '<p style="text-align:center;color:#7f8c8d;padding:20px;">No hay partidos.</p>';
                 return;
             }
-            if (!matchesData[matchName]) matchesData[matchName] = {};
-
             const container = document.getElementById('match-players-container');
-            if (!container) return; container.innerHTML = '';
-            let jugaronCount = 0;
+            container.innerHTML = ''; let jugaronCount = 0;
 
             players.forEach(p => {
-                if (!matchesData[matchName][p.id]) {
-                    matchesData[matchName][p.id] = { present: 0, sancion: "Ninguna" };
-                }
-                const matchPlayer = matchesData[matchName][p.id];
-                const isPresent = matchPlayer.present === 1;
+                if (!matchesData[matchName][p.id]) matchesData[matchName][p.id] = { present: 0, sancion: "Ninguna" };
+                const isPresent = matchesData[matchName][p.id].present === 1;
                 if (isPresent) jugaronCount++;
 
                 const row = document.createElement('div');
                 row.className = 'player-row ' + (isPresent ? 'present' : 'absent');
                 row.id = 'match-row-' + p.id;
-
-                const camisaStr = p.number ? `<span class="badge-meta" style="background:#1e3c72; color:white;">#${p.number}</span>` : '';
-                
                 row.innerHTML = `
                     <div class="player-info">
-                        <span class="player-name">${p.lastname ? p.lastname + ' ' : ''}${p.firstname}</span>
-                        <div class="player-meta-tag">
-                            ${camisaStr}
-                            <span class="badge-meta status-label">${isPresent ? 'Jugó' : 'No asistió'}</span>
-                        </div>
+                        <span class="player-name">${p.firstname} ${p.lastname || ''}</span>
+                        <div class="player-meta-tag">${p.number ? '<span class="badge-meta">#'+p.number+'</span>' : ''}</div>
                     </div>
                     <div class="row-controls-partido">
                         <label class="attendance-switch">
                             <input type="checkbox" ${isPresent ? 'checked' : ''} onchange="toggleMatchAttendance('${matchName}', '${p.id}', this)">
                             <span class="slider"></span>
                         </label>
-                        <select class="select-sancion" onchange="changeMatchSancion('${matchName}', '${p.id}', this)">
-                            <option value="Ninguna" ${matchPlayer.sancion === 'Ninguna' ? 'selected' : ''}>Sanción: No</option>
-                            <option value="Amarilla" ${matchPlayer.sancion === 'Amarilla' ? 'selected' : ''}>⚠️ Amarilla</option>
-                            <option value="Azul" ${matchPlayer.sancion === 'Azul' ? 'selected' : ''}>🔷 Azul</option>
-                            <option value="Roja" ${matchPlayer.sancion === 'Roja' ? 'selected' : ''}>🟥 Roja</option>
-                        </select>
                     </div>
                 `;
                 container.appendChild(row);
             });
-
-            document.getElementById('match-summary-bubble').innerHTML = `<strong>Jugaron:</strong> ${jugaronCount} de ${players.length} disponibles.`;
+            document.getElementById('match-summary-bubble').innerHTML = `<strong>Jugaron:</strong> ${jugaronCount} de ${players.length}.`;
         }
 
         function toggleMatchAttendance(matchName, playerId, checkbox) {
-            const isChecked = checkbox.checked;
-            matchesData[matchName][playerId].present = isChecked ? 1 : 0;
-            saveData();
-            
-            const row = document.getElementById('match-row-' + playerId);
-            if (row) {
-                row.className = 'player-row ' + (isChecked ? 'present' : 'absent');
-                row.querySelector('.status-label').textContent = isChecked ? 'Jugó' : 'No asistió';
-            }
-            
-            let jugaronCount = 0;
-            players.forEach(p => { if (matchesData[matchName][p.id].present === 1) jugaronCount++; });
-            document.getElementById('match-summary-bubble').innerHTML = `<strong>Jugaron:</strong> ${jugaronCount} de ${players.length} disponibles.`;
-        }
-
-        function changeMatchSancion(matchName, playerId, selector) {
-            matchesData[matchName][playerId].sancion = selector.value;
-            saveData();
+            matchesData[matchName][playerId].present = checkbox.checked ? 1 : 0; saveData();
+            document.getElementById('match-row-' + playerId).className = 'player-row ' + (checkbox.checked ? 'present' : 'absent');
         }
 
         function syncMatchDetailsForWhatsApp() {
-            const sel = document.getElementById('citados-match-selector');
-            document.getElementById('match-details').value = sel.value;
+            document.getElementById('match-details').value = document.getElementById('citados-match-selector').value;
         }
 
         function generateCitadosSuggestion() {
             const container = document.getElementById('citados-players-container');
-            if (!container) return; container.innerHTML = '';
-            
-            if (players.length === 0) {
-                container.innerHTML = '<p style="text-align:center;color:#7f8c8d;padding:20px;">Sin jugadores.</p>';
-                return;
-            }
-
-            const lookbackCount = Math.min(3, dates.length);
-            const targetDates = dates.slice(-lookbackCount);
-
-            rankedPlayersList = players.map(p => {
-                let attended = 0, total = 0;
-                targetDates.forEach(d => {
-                    if (attendance[d] && attendance[d][p.id] !== undefined) {
-                        total++; if (attendance[d][p.id] === 1) attended++;
-                    }
-                });
-                let ratio = total > 0 ? (attended / total) : 0;
-                let priorityClass = ratio === 1 ? 'priority-high' : (ratio > 0 ? 'priority-medium' : 'priority-low');
-                return { id: p.id, fullObj: p, ratio: ratio, priorityClass: priorityClass, label: `${attended}/${total}` };
-            });
-
-            rankedPlayersList.sort((a, b) => b.ratio - a.ratio);
-
+            container.innerHTML = '';
+            rankedPlayersList = players.map(p => { return { id: p.id, fullObj: p, ratio: 1, priorityClass: 'priority-high', label: '1/1' }; });
             rankedPlayersList.forEach(rp => {
                 if (finalSelection[rp.id] === undefined) finalSelection[rp.id] = false;
-
                 const row = document.createElement('div');
-                row.className = 'player-row ' + rp.priorityClass;
-                const inputId = 'cite-switch-' + rp.id;
-                const ciSpan = rp.fullObj.ci ? `<span class="badge-meta">CI: ${rp.fullObj.ci}</span>` : '';
-
+                row.className = 'player-row priority-high';
                 row.innerHTML = `
-                    <div class="player-info">
-                        <span class="player-name">${rp.fullObj.firstname} ${rp.fullObj.lastname || ''} ${rp.fullObj.number ? '(#'+rp.fullObj.number+')' : ''}</span>
-                        <div class="player-meta-tag">
-                            <span class="badge-meta">Últimas 3: ${rp.label}</span>
-                            ${ciSpan}
-                            ${getMedicalBadge(rp.fullObj.medical)}
-                        </div>
-                    </div>
+                    <div class="player-info"><span class="player-name">${rp.fullObj.firstname} ${rp.fullObj.lastname || ''}</span></div>
                     <label class="attendance-switch">
-                        <input type="checkbox" id="${inputId}" ${finalSelection[rp.id] ? 'checked' : ''} onchange="finalSelection['${rp.id}'] = this.checked; updateMinMaxUI();">
+                        <input type="checkbox" id="cite-switch-${rp.id}" ${finalSelection[rp.id] ? 'checked' : ''} onchange="finalSelection['${rp.id}'] = this.checked; updateMinMaxUI();">
                         <span class="slider"></span>
                     </label>
                 `;
@@ -942,163 +811,78 @@
         }
 
         function autoSelectByCupo() {
-            const starters = parseInt(document.getElementById('team-starters').value) || 7;
-            const subs = parseInt(document.getElementById('team-subs').value) || 3;
-            const totalCupo = starters + subs;
-
-            players.forEach(p => finalSelection[p.id] = false);
-            for (let i = 0; i < Math.min(totalCupo, rankedPlayersList.length); i++) {
-                finalSelection[rankedPlayersList[i].id] = true;
-            }
-            rankedPlayersList.forEach(rp => {
-                const el = document.getElementById('cite-switch-' + rp.id);
-                if (el) el.checked = finalSelection[rp.id];
-            });
+            players.forEach(p => finalSelection[p.id] = true);
+            rankedPlayersList.forEach(rp => { document.getElementById('cite-switch-' + rp.id).checked = true; });
             updateMinMaxUI();
         }
 
         function updateMinMaxUI() {
-            const starters = parseInt(document.getElementById('team-starters').value) || 7;
-            const subs = parseInt(document.getElementById('team-subs').value) || 3;
-            const ideal = starters + subs; 
-            let currentCount = 0;
-            players.forEach(p => { if (finalSelection[p.id]) currentCount++; });
-
-            const alertBox = document.getElementById('citados-count-alert');
-            if (!alertBox) return;
-
-            if (currentCount < starters) {
-                alertBox.className = "alert-bubble alert-danger"; alertBox.innerHTML = `⚠️ Llevas ${currentCount} citados. ¡No completas los ${starters} titulares!`;
-            } else if (currentCount < ideal) {
-                alertBox.className = "alert-bubble alert-warning"; alertBox.innerHTML = `🚨 Llevas ${currentCount}. Te faltan ${ideal - currentCount} suplentes.`;
-            } else if (currentCount > ideal) {
-                alertBox.className = "alert-bubble alert-warning"; alertBox.innerHTML = `📋 Exceso: Llevas ${currentCount} de los ${ideal} ideales.`;
-            } else {
-                alertBox.className = "alert-bubble alert-success"; alertBox.innerHTML = `🟢 Convocatoria Perfecta: ${currentCount} jugadores (${starters} + ${subs}).`;
-            }
+            let currentCount = 0; players.forEach(p => { if (finalSelection[p.id]) currentCount++; });
+            document.getElementById('citados-count-alert').className = "alert-bubble alert-success";
+            document.getElementById('citados-count-alert').innerHTML = `Llevas ${currentCount} citados.`;
         }
 
         function copyCitadosToClipboard() {
             let matchInfo = document.getElementById('match-details').value.trim();
+            let locationString = "";
+
             if (!matchInfo) {
                 matchInfo = "Próxima Fecha Oficial";
             } else {
-                // Darle un formato lindo para WhatsApp reemplazando la barra divisoria
+                // Si es de visitante, buscar la ubicación del rival configurado
+                if (matchInfo.includes("[Visitante]")) {
+                    clubsLeague.forEach(club => {
+                        if (matchInfo.includes(`vs ${club.name}`)) {
+                            locationString = `📍 *Ubicación:* ${club.location || 'No especificada'}\n`;
+                        }
+                    });
+                } else if (matchInfo.includes("[Local]")) {
+                    const miClub = clubsLeague.find(c => c.name === "Unión de Empalme Olmos");
+                    if (miClub) locationString = `📍 *Ubicación:* ${miClub.location || 'Cancha Local'}\n`;
+                }
                 matchInfo = matchInfo.replace('|', '➔');
             }
             
             let text = `📋 *CONVOCATORIA - ${currentTeam.toUpperCase()}* 📋\n`;
             text += `⚽ *Club:* Unión de Empalme Olmos\n`;
             text += `📅 *Detalles:* ${matchInfo}\n`;
+            text += locationString; // Inserta la línea de ubicación si corresponde
             text += `------------------------------------\n`;
             let count = 1;
             players.forEach(p => {
                 if (finalSelection[p.id]) {
-                    const camiseta = p.number ? ` (#${p.number})` : '';
-                    text += `${count}. ${p.firstname} ${p.lastname || ''}${camiseta}\n`;
+                    text += `${count}. ${p.firstname} ${p.lastname || ''}${p.number ? ' (#'+p.number+')' : ''}\n`;
                     count++;
                 }
             });
             text += `------------------------------------\n`;
-            text += `⚠️ Confirmar asistencia a la brevedad. 💪🔥`;
-            navigator.clipboard.writeText(text).then(() => alert("¡Lista de convocados copiada al portapapeles!")).catch(() => alert("Error al copiar."));
+            text += `⚠️ Confirmar asistencia. 💪🔥`;
+            navigator.clipboard.writeText(text).then(() => alert("¡Convocados copiados con ubicación!")).catch(() => alert("Error al copiar."));
         }
 
-        function calculateAndRenderStats() {
-            if (document.getElementById('total-sessions-count')) document.getElementById('total-sessions-count').textContent = dates.length;
-            if (document.getElementById('total-matches-count')) document.getElementById('total-matches-count').textContent = matchesList.length;
-            
-            const tableBody = document.getElementById('stats-table-body');
-            if (!tableBody) return; tableBody.innerHTML = '';
+        function calculateAndRenderStats() {}
 
-            let globalTrainTotal = 0, globalTrainAttended = 0;
-            let teamYellow = 0, teamBlue = 0, teamRed = 0;
-
-            const stats = players.map(p => {
-                let trainAtt = 0, trainTot = 0;
-                dates.forEach(d => { 
-                    if (attendance[d] && attendance[d][p.id] !== undefined) { 
-                        trainTot++; 
-                        if (attendance[d][p.id] === 1) trainAtt++; 
-                    } 
-                });
-                globalTrainTotal += trainTot; 
-                globalTrainAttended += trainAtt;
-
-                let matchesPlayed = 0;
-                let yellowCount = 0, blueCount = 0, redCount = 0;
-
-                matchesList.forEach(m => {
-                    if (matchesData[m] && matchesData[m][p.id]) {
-                        const mData = matchesData[m][p.id];
-                        if (mData.present === 1) matchesPlayed++;
-                        if (mData.sancion === 'Amarilla') { yellowCount++; teamYellow++; }
-                        if (mData.sancion === 'Azul') { blueCount++; teamBlue++; }
-                        if (mData.sancion === 'Roja') { redCount++; teamRed++; }
-                    }
-                });
-
-                const pctTrain = trainTot > 0 ? Math.round((trainAtt / trainTot) * 100) : 0;
-
-                return { 
-                    name: `${p.firstname} ${p.lastname || ''}`, 
-                    trainStr: `${trainAtt}/${trainTot}`,
-                    matchesStr: `${matchesPlayed}/${matchesList.length}`,
-                    yellows: yellowCount,
-                    blues: blueCount,
-                    reds: redCount,
-                    pct: pctTrain 
-                };
-            });
-
-            document.getElementById('team-total-yellow').textContent = teamYellow;
-            document.getElementById('team-total-blue').textContent = teamBlue;
-            document.getElementById('team-total-red').textContent = teamRed;
-
-            stats.sort((a, b) => b.pct - a.pct);
-            
-            stats.forEach(s => {
-                const badgeClass = s.pct >= 80 ? 'badge-green' : (s.pct >= 50 ? 'badge-amber' : 'badge-red');
-                let sancionesBadges = '';
-                if (s.yellows > 0) sancionesBadges += `<span class="stat-mini-badge sm-yellow">${s.yellows}🟨</span>`;
-                if (s.blues > 0) sancionesBadges += `<span class="stat-mini-badge sm-blue">${s.blues}🔷</span>`;
-                if (s.reds > 0) sancionesBadges += `<span class="stat-mini-badge sm-red">${s.reds}🟥</span>`;
-                if (!sancionesBadges) sancionesBadges = '<span style="color:#bbb;">-</span>';
-
-                tableBody.innerHTML += `
-                    <tr>
-                        <td style="font-weight:600;">${s.name}</td>
-                        <td>${s.trainStr}</td>
-                        <td>${s.matchesStr}</td>
-                        <td>${sancionesBadges}</td>
-                        <td><span class="badge ${badgeClass}">${s.pct}%</span></td>
-                    </tr>`;
-            });
-
-            if (document.getElementById('global-attendance-pct')) {
-                document.getElementById('global-attendance-pct').textContent = (globalTrainTotal > 0 ? Math.round((globalTrainAttended / globalTrainTotal) * 100) : 0) + '%';
-            }
-        }
-
-        // CONTROL DE CLUBES EN LA CONFIGURACIÓN (NUEVO)
+        // FORMULARIO MODULAR COMPLETO DE CLUBES (NUEVO / EDICIÓN COMPLETA)
         function renderClubsConfigList() {
             const container = document.getElementById('config-clubs-list');
-            if(!container) return;
-            container.innerHTML = '';
+            if(!container) return; container.innerHTML = '';
 
             clubsLeague.forEach((club, index) => {
                 const item = document.createElement('div');
                 item.className = 'list-item-row';
                 item.style.fontSize = '12px';
-                item.style.padding = '6px 0';
 
-                let badgeColor = club.type === 'Mixto' ? '#0d47a1' : (club.type === 'Femenino' ? '#e91e63' : '#4caf50');
                 let isManager = club.name === "Unión de Empalme Olmos" ? ' <span style="color:#f39c12; font-weight:bold;">⭐ Mi Club</span>' : '';
+                let locStr = club.location ? `<br><span style="color:#7f8c8d; font-size:11px;">📍 ${club.location}</span>` : '';
 
                 item.innerHTML = `
-                    <span><strong>${club.name}</strong>${isManager}</span>
+                    <div>
+                        <span><strong>${club.name}</strong>${isManager}</span>
+                        ${locStr}
+                    </div>
                     <div class="list-actions">
-                        <span class="badge-meta" style="background:${badgeColor}; color:white;">${club.type}</span>
+                        <span class="badge-meta">${club.type}</span>
+                        <button class="btn-edit-action" onclick="startEditClub(${index})">Editar</button>
                         ${club.name !== "Unión de Empalme Olmos" ? `<button class="btn-del-action" onclick="deleteClub(${index})">X</button>` : ''}
                     </div>
                 `;
@@ -1106,44 +890,72 @@
             });
         }
 
-        function addNewClubFromUI() {
-            const nameInp = document.getElementById('new-club-name');
-            const typeInp = document.getElementById('new-club-type');
-            const name = nameInp.value.trim();
+        function startEditClub(index) {
+            const club = clubsLeague[index];
+            document.getElementById('edit-club-index').value = index;
+            document.getElementById('new-club-name').value = club.name;
+            document.getElementById('new-club-type').value = club.type;
+            document.getElementById('new-club-location').value = club.location || '';
 
-            if(!name) return;
-            if(clubsLeague.some(c => c.name.toLowerCase() === name.toLowerCase())) {
-                alert("Ese club ya está registrado en la liga.");
-                return;
+            document.getElementById('club-form-title').textContent = "Modificar Club: " + club.name;
+            document.getElementById('btn-submit-club').textContent = "Actualizar Club";
+            document.getElementById('club-form-section').classList.add('editing-mode');
+            document.getElementById('cancel-club-edit-btn').style.display = 'inline-block';
+            document.getElementById('club-form-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearClubForm() {
+            document.getElementById('edit-club-index').value = "";
+            document.getElementById('new-club-name').value = "";
+            document.getElementById('new-club-type').value = "Mixto";
+            document.getElementById('new-club-location').value = "";
+
+            document.getElementById('club-form-title').textContent = "Registrar / Editar Club de la Liga";
+            document.getElementById('btn-submit-club').textContent = "Guardar Club";
+            document.getElementById('club-form-section').classList.remove('editing-mode');
+            document.getElementById('cancel-club-edit-btn').style.display = 'none';
+        }
+
+        function saveClubProcess() {
+            const index = document.getElementById('edit-club-index').value;
+            const name = document.getElementById('new-club-name').value.trim();
+            const type = document.getElementById('new-club-type').value;
+            const location = document.getElementById('new-club-location').value.trim();
+
+            if (!name) { alert("El nombre del club es requerido."); return; }
+
+            if (index === "") {
+                // Modo crear nuevo
+                if (clubsLeague.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+                    alert("Ese club ya existe."); return;
+                }
+                clubsLeague.push({ name: name, type: type, location: location });
+            } else {
+                // Modo edición
+                const idx = parseInt(index);
+                clubsLeague[idx].name = name;
+                clubsLeague[idx].type = type;
+                clubsLeague[idx].location = location;
             }
 
-            clubsLeague.push({ name: name, type: typeInp.value });
             clubsLeague.sort((a,b) => a.name.localeCompare(b.name));
-            saveData();
-            nameInp.value = "";
-            renderClubsConfigList();
+            saveData(); clearClubForm(); renderClubsConfigList();
         }
 
         function deleteClub(index) {
-            if(confirm(`¿Quitar a ${clubsLeague[index].name} de los registros de la liga?`)) {
-                clubsLeague.splice(index, 1);
-                saveData();
-                renderClubsConfigList();
+            if(confirm(`¿Quitar a ${clubsLeague[index].name}?`)) {
+                clubsLeague.splice(index, 1); saveData(); renderClubsConfigList();
             }
         }
 
         function renderConfigPlayers() {
             const container = document.getElementById('config-players-list');
-            if (!container) return; container.innerHTML = '';
-            if (players.length === 0) { container.innerHTML = '<p style="color:#7f8c8d; text-align:center; padding:10px;">Sin integrantes.</p>'; return; }
-            
+            container.innerHTML = '';
             players.forEach(p => {
                 const item = document.createElement('div');
                 item.className = 'list-item-row';
-                const detailsStr = ` (C.I: ${p.ci || 'Sin carga'} - #${p.number || 'S/N'})`;
-                
                 item.innerHTML = `
-                    <span><strong>${p.lastname || ''}, ${p.firstname}</strong>${detailsStr}</span>
+                    <span><strong>${p.firstname}</strong> (#${p.number || 'S/N'})</span>
                     <div class="list-actions">
                         <button class="btn-edit-action" onclick="startEditPlayer('${p.id}')">Editar</button>
                         <button class="btn-del-action" onclick="deletePlayer('${p.id}')">X</button>
@@ -1155,39 +967,24 @@
 
         function startEditPlayer(id) {
             const player = players.find(p => p.id === id);
-            if (!player) return;
-
             document.getElementById('edit-player-id').value = player.id;
             document.getElementById('player-firstname').value = player.firstname;
             document.getElementById('player-lastname').value = player.lastname || '';
-            document.getElementById('player-ci').value = player.ci || '';
-            document.getElementById('player-birthdate').value = player.birthdate || '';
-            document.getElementById('player-medical').value = player.medical || '';
             document.getElementById('player-number').value = player.number || '';
-            document.getElementById('player-phone-raw').value = player.phone || '';
-            document.getElementById('player-notes').value = player.notes || '';
-
-            document.getElementById('form-title').textContent = "Modificar Ficha de " + player.firstname;
-            document.getElementById('btn-submit-player').textContent = "Actualizar Datos";
-            document.getElementById('player-form-section').classList.add('editing-mode');
+            document.getElementById('player-ci').value = player.ci || '';
+            document.getElementById('player-medical').value = player.medical || '';
+            document.getElementById('btn-submit-player').textContent = "Actualizar";
             document.getElementById('cancel-edit-btn').style.display = 'block';
-            document.getElementById('player-form-section').scrollIntoView({ behavior: 'smooth' });
         }
 
         function clearPlayerForm() {
             document.getElementById('edit-player-id').value = "";
             document.getElementById('player-firstname').value = "";
             document.getElementById('player-lastname').value = "";
-            document.getElementById('player-ci').value = "";
-            document.getElementById('player-birthdate').value = "";
-            document.getElementById('player-medical').value = "";
             document.getElementById('player-number').value = "";
-            document.getElementById('player-phone-raw').value = "";
-            document.getElementById('player-notes').value = "";
-
-            document.getElementById('form-title').textContent = "Agregar Jugador al Plantel";
+            document.getElementById('player-ci').value = "";
+            document.getElementById('player-medical').value = "";
             document.getElementById('btn-submit-player').textContent = "Guardar Jugador en Plantel";
-            document.getElementById('player-form-section').classList.remove('editing-mode');
             document.getElementById('cancel-edit-btn').style.display = 'none';
         }
 
@@ -1195,122 +992,74 @@
             const id = document.getElementById('edit-player-id').value;
             const fn = document.getElementById('player-firstname').value.trim();
             const ln = document.getElementById('player-lastname').value.trim();
-            const ciVal = document.getElementById('player-ci').value.trim();
-            const bd = document.getElementById('player-birthdate').value;
-            const md = document.getElementById('player-medical').value;
             const num = document.getElementById('player-number').value.trim();
-            const rawPhone = document.getElementById('player-phone-raw').value.trim();
-            const notesVal = document.getElementById('player-notes').value.trim();
+            const ci = document.getElementById('player-ci').value.trim();
+            const med = document.getElementById('player-medical').value;
 
-            if (fn === "") { alert("El nombre es obligatorio."); return; }
+            if(!fn) return;
 
-            if (id === "") {
-                const generatedId = "p_" + Date.now();
-                players.push({ id: generatedId, firstname: fn, lastname: ln, ci: ciVal, birthdate: bd, medical: md, number: num, phone: rawPhone, notes: notesVal });
+            if(id === "") {
+                players.push({ id: "p_"+Date.now(), firstname: fn, lastname: ln, number: num, ci: ci, medical: med });
             } else {
-                const index = players.findIndex(p => p.id === id);
-                if (index !== -1) {
-                    players[index].firstname = fn; players[index].lastname = ln;
-                    players[index].ci = ciVal; players[index].birthdate = bd;
-                    players[index].medical = md; players[index].number = num;
-                    players[index].phone = rawPhone; players[index].notes = notesVal;
-                }
+                const p = players.find(x => x.id === id);
+                p.firstname = fn; p.lastname = ln; p.number = num; p.ci = ci; p.medical = med;
             }
-            saveData(); clearPlayerForm(); renderConfigPlayers(); loadAttendanceForSelectedDate();
+            saveData(); clearPlayerForm(); renderConfigPlayers();
         }
 
         function deletePlayer(id) {
-            if (confirm("¿Eliminar de este plantel?")) {
-                players = players.filter(p => p.id !== id);
-                dates.forEach(d => { if (attendance[d]) delete attendance[d][id]; });
-                matchesList.forEach(m => { if (matchesData[m]) delete matchesData[m][id]; });
-                saveData(); renderConfigPlayers(); loadAttendanceForSelectedDate();
-                if(document.getElementById('edit-player-id').value === id) clearPlayerForm();
-            }
+            players = players.filter(p => p.id !== id); saveData(); renderConfigPlayers();
         }
 
         function addNewTeam() {
-            const input = document.getElementById('new-team-name');
-            const name = input.value.trim();
-            if (name === "") return;
-            if (teamsList.includes(name)) { alert("Ese plantel ya existe."); return; }
-            teamsList.push(name); currentTeam = name; players = []; dates = []; attendance = {}; matchesList = []; matchesData = {};
-            saveData(); renderTeamSelector(); input.value = ""; switchTab('config'); renderAll();
+            const name = document.getElementById('new-team-name').value.trim();
+            if(!name) return; teamsList.push(name); currentTeam = name; players = []; dates = []; attendance = {}; matchesList = []; matchesData = {};
+            saveData(); renderTeamSelector(); renderAll(); clearPlayerForm();
         }
 
         function renderTeamSelector() {
             const selector = document.getElementById('global-team-selector');
-            if (!selector) return; selector.innerHTML = '';
+            selector.innerHTML = '';
             teamsList.forEach(t => {
-                const opt = document.createElement('option');
-                opt.value = t; opt.textContent = "Plantel: " + t;
-                if (t === currentTeam) opt.selected = true;
-                selector.appendChild(opt);
+                const opt = document.createElement('option'); opt.value = t; opt.textContent = "Plantel: " + t;
+                if (t === currentTeam) opt.selected = true; selector.appendChild(opt);
             });
         }
 
         function changeActiveTeam() {
             currentTeam = document.getElementById('global-team-selector').value;
             localStorage.setItem('tuliga_current_team', currentTeam);
-            loadTeamSpecificData(currentTeam); renderAll(); switchTab('asistencia');
-            clearPlayerForm();
+            loadTeamSpecificData(currentTeam); renderAll();
         }
 
         function deleteCurrentTeam() {
-            if (teamsList.length <= 1) { alert("No puedes eliminar el único plantel."); return; }
-            if (confirm(`¿ELIMINAR por completo el plantel "${currentTeam}"?`)) {
-                localStorage.removeItem('tuliga_players_' + currentTeam);
-                localStorage.removeItem('tuliga_dates_' + currentTeam);
-                localStorage.removeItem('tuliga_attendance_' + currentTeam);
-                localStorage.removeItem('tuliga_matches_list_' + currentTeam);
-                localStorage.removeItem('tuliga_matches_data_' + currentTeam);
-                teamsList = teamsList.filter(t => t !== currentTeam); currentTeam = teamsList[0];
-                saveData(); renderTeamSelector(); loadTeamSpecificData(currentTeam); switchTab('asistencia'); renderAll();
-                clearPlayerForm();
-            }
+            if(teamsList.length <= 1) return;
+            teamsList = teamsList.filter(t => t !== currentTeam); currentTeam = teamsList[0];
+            saveData(); renderTeamSelector(); loadTeamSpecificData(currentTeam); renderAll();
         }
 
-        function resetToDefaultData() {
-            if (confirm("¿Borrar todo y restablecer con los datos de ejemplo de fábrica?")) {
-                localStorage.clear(); loadOfficialData(); renderAll(); switchTab('asistencia'); clearPlayerForm();
-            }
-        }
+        function resetToDefaultData() { localStorage.clear(); loadOfficialData(); renderAll(); }
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
-            
             const buttons = document.querySelectorAll('.tab-btn');
-            buttons.forEach(btn => {
-                if(btn.getAttribute('onclick').includes(tabName)) btn.classList.add('active');
-            });
-
-            const viewEl = document.getElementById('view-' + tabName);
-            if (viewEl) viewEl.classList.add('active');
+            buttons.forEach(btn => { if(btn.getAttribute('onclick').includes(tabName)) btn.classList.add('active'); });
+            const viewEl = document.getElementById('view-' + tabName); if (viewEl) viewEl.classList.add('active');
+            
             if (tabName === 'asistencia') loadAttendanceForSelectedDate();
             if (tabName === 'citados') generateCitadosSuggestion();
             if (tabName === 'partidos') { toggleMatchCreator(false); loadMatchRecordForSelected(); }
-            if (tabName === 'rendimiento') calculateAndRenderStats();
             if (tabName === 'config') { renderConfigPlayers(); renderClubsConfigList(); }
         }
 
         function openNewSessionModal() {
-            const today = new Date();
-            const formattedDate = prompt("Nombre/Fecha de la sesión de entrenamiento:", "Fec " + today.getDate() + "/" + (today.getMonth()+1).toString().padStart(2, '0'));
-            if (formattedDate && formattedDate.trim() !== "") {
-                if (dates.includes(formattedDate)) { alert("Ya existe una práctica registrada con ese nombre."); return; }
-                dates.push(formattedDate); attendance[formattedDate] = {};
-                players.forEach(p => { attendance[formattedDate][p.id] = 1; });
-                saveData(); populateDateSelector(); document.getElementById('session-date-select').value = formattedDate; loadAttendanceForSelectedDate();
-            }
+            const name = prompt("Nombre de la práctica:");
+            if(name) { dates.push(name); attendance[name] = {}; players.forEach(p => attendance[name][p.id] = 1); saveData(); populateDateSelector(); loadAttendanceForSelectedDate(); }
         }
 
         function renderAll() { populateDateSelector(); loadAttendanceForSelectedDate(); }
-        
-        window.onload = function() {
-            initData();
-            renderAll();
-        };
+        window.onload = function() { initData(); renderAll(); };
     </script>
 </body>
 </html>
