@@ -2,461 +2,292 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Asistencias ProTeam</title>
-    <style>
-        *, *::before, *::after {
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #f4f7f5;
-            color: #2c3e50;
-            padding-bottom: 40px;
-            -webkit-text-size-adjust: 100%;
-        }
-
-        header {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
-            padding: 16px 12px;
-            text-align: center;
-            border-bottom-left-radius: 16px;
-            border-bottom-right-radius: 16px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 19px;
-            font-weight: 700;
-        }
-
-        .team-selector-header {
-            margin-top: 8px;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            font-weight: 600;
-            border-radius: 8px;
-            padding: 6px 10px;
-            height: 36px;
-            font-size: 14px;
-            width: auto;
-            max-width: 90%;
-        }
-        .team-selector-header option { color: #2c3e50; }
-
-        .container { padding: 12px; max-width: 100%; }
-
-        .tabs {
-            display: flex;
-            background: #e8ede9;
-            border-radius: 10px;
-            padding: 3px;
-            margin-bottom: 12px;
-            gap: 2px;
-            overflow-x: auto;
-        }
-
-        .tab-btn {
-            flex: 1;
-            border: none;
-            background: none;
-            padding: 10px 2px;
-            font-size: 11px;
-            font-weight: 600;
-            color: #556b57;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.15s ease;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .tab-btn.active {
-            background: white;
-            color: #1e3c72;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-        }
-
-        .action-bar {
-            background: white;
-            padding: 10px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-        }
-
-        .date-select-wrapper { flex: 1.2; }
-
-        select, input, button, textarea {
-            width: 100%;
-            padding: 11px 10px;
-            border-radius: 8px;
-            border: 1px solid #c8d3c9;
-            background-color: white;
-            font-size: 14px;
-            color: #2c3e50;
-            outline: none;
-            height: 42px;
-        }
-
-        textarea {
-            height: 60px;
-            resize: none;
-            font-family: inherit;
-        }
-
-        .btn-primary { background-color: #1e3c72; color: white; border: none; font-weight: 600; cursor: pointer; }
-        .btn-secondary { background-color: #e8ede9; color: #1e3c72; border: none; font-weight: 600; flex: 1; font-size: 13px; padding: 0 8px; cursor: pointer; }
-        .btn-auto { background-color: #f39c12; color: white; border: none; font-weight: 700; font-size: 13px; border-radius: 8px; height: 42px; cursor: pointer; }
-        .btn-whatsapp { background-color: #25D366; color: white; border: none; font-weight: 700; font-size: 14px; margin-top: 10px; cursor: pointer; }
-
-        .info-bubble { background-color: #e3f2fd; color: #0d47a1; padding: 10px 12px; border-radius: 10px; font-size: 12px; margin-bottom: 12px; border-left: 4px solid #1976d2; line-height: 1.4; }
-        .generic-config-row { display: flex; gap: 8px; background: white; padding: 10px; border-radius: 12px; margin-bottom: 8px; }
-        
-        .input-group { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-        .input-group label { font-size: 11px; font-weight: 700; color: #7f8c8d; text-transform: uppercase; }
-
-        .alert-bubble { padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 600; margin-bottom: 12px; text-align: center; }
-        .alert-success { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
-        .alert-warning { background-color: #fffde7; color: #f57f17; border: 1px solid #fff59d; }
-
-        .player-list { display: flex; flex-direction: column; gap: 8px; }
-        
-        .player-row {
-            background: white;
-            padding: 12px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.02);
-            border-left: 5px solid #cbd5cb;
-        }
-        .player-row.present { border-left-color: #4caf50; background-color: #f4faf5; }
-        .player-row.absent { border-left-color: #e53935; background-color: #fff6f6; }
-
-        .player-info { display: flex; flex-direction: column; flex: 1; padding-right: 8px; }
-        .player-name { font-weight: 600; font-size: 15px; }
-        .player-meta-tag { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
-        
-        .badge-meta { padding: 2px 5px; border-radius: 4px; font-size: 10px; font-weight: 600; background: #e8ede9; color: #4f5f51; }
-        .badge-medical-ok { background: #e8f5e9; color: #2e7d32; }
-        .badge-medical-warn { background: #fffde7; color: #b78103; }
-        .badge-medical-expired { background: #ffebee; color: #c62828; }
-
-        .attendance-switch { position: relative; display: inline-block; width: 58px; height: 32px; flex-shrink: 0; }
-        .attendance-switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #e53935; transition: .2s; border-radius: 32px; }
-        .slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 4px; bottom: 4px; background-color: white; transition: .2s; border-radius: 50%; }
-        input:checked + .slider { background-color: #4caf50; }
-        input:checked + .slider:before { transform: translateX(26px); }
-
-        .view { display: none; }
-        .view.active { display: block; }
-
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-        .stat-card { background: white; padding: 12px; border-radius: 12px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
-        .stat-val { font-size: 20px; font-weight: 700; color: #1e3c72; }
-        .stat-lbl { font-size: 11px; color: #7f8c8d; margin-top: 2px; }
-
-        .cards-summary-box {
-            background: white;
-            padding: 10px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        }
-        .card-mini-lbl { font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
-
-        .table-card { background: white; border-radius: 12px; padding: 6px; overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 290px; }
-        th, td { padding: 10px 4px; border-bottom: 1px solid #f5f5f5; text-align: center; }
-        th:first-child, td:first-child { text-align: left; padding-left: 6px; font-size: 13px; }
-
-        .config-section { background: white; padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid transparent; transition: border 0.3s ease; }
-        .config-section.editing-mode { border: 2px solid #2a5298; background-color: #f0f4f8; }
-        .config-section h3 { margin: 0 0 10px 0; font-size: 14px; color: #1e3c72; border-bottom: 1px solid #eee; padding-bottom: 4px; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-        
-        .list-item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f9f9f9; font-size: 14px; }
-        .list-actions { display: flex; gap: 12px; align-items: center; }
-        .btn-edit-action { color: #2a5298; background: none; border: none; width: auto; font-weight: 600; font-size: 13px; padding: 0; cursor: pointer; height: auto; }
-        .btn-del-action { color: #e53935; background: none; border: none; width: auto; font-weight: 600; font-size: 13px; padding: 0; cursor: pointer; height: auto; }
-        .cancel-edit-lnk { display: block; text-align: center; color: #7f8c8d; font-size: 12px; margin-top: 8px; text-decoration: underline; cursor: pointer; }
-        
-        .row-controls-partido { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
-        .match-creator-box { background: #fdfdfd; border: 1px dashed #cbd5cb; padding: 12px; border-radius: 10px; margin-bottom: 12px; display: none; }
-        .match-creator-box.active { display: block; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TuLiga - Gestión de Fútbol Infantil</title>
+    <!-- Tailwind CSS para diseño rápido y moderno -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Lucide Icons para los iconos de la interfaz -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col font-sans">
 
-    <header>
-        <h1>Asistencias ProTeam</h1>
-        <select id="global-team-selector" class="team-selector-header" onchange="changeActiveTeam()"></select>
-    </header>
-
-    <div class="container">
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('asistencia')">Prácticas</button>
-            <button class="tab-btn" onclick="switchTab('citados')">Convocatoria</button>
-            <button class="tab-btn" onclick="switchTab('partidos')">Partidos</button>
-            <button class="tab-btn" onclick="switchTab('rendimiento')">Estadísticas</button>
-            <button class="tab-btn" onclick="switchTab('config')">Config</button>
-        </div>
-
-        <!-- VIEW 1: PASE DE LISTA PRÁCTICAS -->
-        <div id="view-asistencia" class="view active">
-            <div class="action-bar">
-                <div class="date-select-wrapper">
-                    <select id="session-date-select" onchange="loadAttendanceForSelectedDate()"></select>
-                </div>
-                <button class="btn-secondary" onclick="openNewSessionModal()">+ Nueva</button>
-            </div>
-            <div class="info-bubble" id="attendance-summary-bubble">Cargando...</div>
-            <div class="player-list" id="attendance-players-container"></div>
-        </div>
-
-        <!-- VIEW 2: SUGERENCIA DE CITADOS -->
-        <div id="view-citados" class="view">
-            <div class="generic-config-row">
-                <div class="input-group">
-                    <label>¿Cuántos Juegan?</label>
-                    <input type="number" id="team-starters" value="7" min="1" max="30" onchange="updateMinMaxUI()">
-                </div>
-                <div class="input-group">
-                    <label>Suplentes Mínimos</label>
-                    <input type="number" id="team-subs" value="3" min="0" max="20" onchange="updateMinMaxUI()">
-                </div>
-            </div>
-
-            <div class="action-bar" style="margin-bottom: 8px; gap: 6px;">
-                <select id="citados-match-selector" style="flex: 1.5;" onchange="syncMatchDetailsForWhatsApp()">
-                    <option value="">Seleccionar Partido Definido...</option>
-                </select>
-                <button class="btn-auto" onclick="autoSelectByCupo()">⚡ Auto-Citar</button>
-            </div>
-            <input type="hidden" id="match-details" value="">
-
-            <div id="citados-count-alert" class="alert-bubble alert-warning">Calculando citados...</div>
-            <div class="player-list" id="citados-players-container"></div>
-
-            <button class="btn-primary btn-whatsapp" onclick="copyCitadosToClipboard()">
-                📋 Copiar Convocados para WhatsApp
-            </button>
-        </div>
-
-        <!-- VIEW 3: REGISTRO DE PARTIDOS JUGADOS -->
-        <div id="view-partidos" class="view">
-            <div class="action-bar">
-                <div class="date-select-wrapper">
-                    <select id="match-record-select" onchange="loadMatchRecordForSelected()"></select>
-                </div>
-                <button class="btn-secondary" onclick="toggleMatchCreator(true)">+ Definir Partido</button>
-            </div>
-
-            <div id="match-creator-form" class="match-creator-box">
-                <h4 style="margin: 0 0 8px 0; color: #1e3c72; font-size: 13px;">Definir Nuevo Encuentro Oficial</h4>
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>Rival</label>
-                        <select id="new-match-rival"></select>
-                    </div>
-                    <div class="input-group">
-                        <label>Fecha</label>
-                        <input type="date" id="new-match-date">
-                    </div>
-                </div>
-                <div class="form-grid" style="margin-top: 6px;">
-                    <div class="input-group">
-                        <label>Condición</label>
-                        <select id="new-match-condition">
-                            <option value="Local">Unión Local</option>
-                            <option value="Visitante">Visitante</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label>Categoría / Rama</label>
-                        <select id="new-match-type">
-                            <option value="Mixto">Mixto</option>
-                            <option value="Femenino">Femenino</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-grid" style="margin-top: 6px;">
-                    <div class="input-group" style="grid-column: span 2;">
-                        <label>Detalle de Hora (Ej: 15:30 hs)</label>
-                        <input type="text" id="new-match-extra" placeholder="Ej: 15:30 hs">
-                    </div>
-                </div>
-                <div style="display: flex; gap: 6px; margin-top: 10px;">
-                    <button class="btn-primary" style="height:34px; font-size:12px; padding:0;" onclick="saveStructuredMatch()">Guardar Partido</button>
-                    <button class="btn-secondary" style="height:34px; font-size:12px; background:#eee; color:#333;" onclick="toggleMatchCreator(false)">Cancelar</button>
-                </div>
-            </div>
-
-            <div class="info-bubble" id="match-summary-bubble">Selecciona o crea un partido.</div>
-            <div class="player-list" id="match-players-container"></div>
-        </div>
-
-        <!-- VIEW 4: RENDIMIENTO GENERAL -->
-        <div id="view-rendimiento" class="view">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-val" id="global-attendance-pct">0%</div>
-                    <div class="stat-lbl">Global Prácticas</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-val" id="total-sessions-count">0</div>
-                    <div class="stat-lbl">Entrenamientos</div>
-                </div>
-            </div>
-            <div class="table-card">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Integrante</th>
-                            <th>Prácticas</th>
-                            <th>Partidos</th>
-                        </tr>
-                    </thead>
-                    <tbody id="stats-table-body"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- VIEW 5: CONFIGURACIÓN -->
-        <div id="view-config" class="view">
-            <div class="config-section" id="club-form-section">
-                <h3 id="club-form-title">Registrar / Editar Club de la Liga</h3>
-                <input type="hidden" id="edit-club-index" value="">
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>Nombre del Club</label>
-                        <input type="text" id="new-club-name" placeholder="Ej: Huracán del Pinar">
-                    </div>
-                    <div class="input-group">
-                        <label>Modalidades</label>
-                        <select id="new-club-type">
-                            <option value="Mixto">Mixto</option>
-                            <option value="Femenino">Femenino</option>
-                            <option value="Ambos">Ambos (Mix/Fem)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-grid" style="margin-top: 4px;">
-                    <div class="input-group" style="grid-column: span 2;">
-                        <label>Dirección / Ubicación de la Cancha (Link o Texto)</label>
-                        <input type="text" id="new-club-location" placeholder="Ej: https://maps.app.goo.gl/...">
-                    </div>
-                </div>
-                <div style="display:flex; gap: 6px; margin-top: 8px;">
-                    <button class="btn-primary" style="height: 36px; font-size: 13px;" id="btn-submit-club" onclick="saveClubProcess()">Guardar Club</button>
-                    <button class="btn-secondary" style="height: 36px; font-size: 13px; display:none; background:#eee; color:#333;" id="cancel-club-edit-btn" onclick="clearClubForm()">Cancelar</button>
-                </div>
-                <div id="config-clubs-list" style="margin-top: 12px; max-height: 220px; overflow-y: auto; background: #fafafa; padding: 6px; border-radius: 8px;"></div>
-            </div>
-
-            <div class="config-section">
-                <h3>Crear Nuevo Plantel de Trabajo</h3>
-                <div style="display:flex; gap:8px;">
-                    <input type="text" id="new-team-name" placeholder="Ej: Categoría 2015">
-                    <button class="btn-primary" style="width: auto; padding: 0 16px;" onclick="addNewTeam()">+</button>
-                </div>
+    <!-- BARRA DE NAVEGACIÓN PRINCIPAL -->
+    <header class="bg-blue-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="trophy" class="w-8 h-8 text-yellow-300"></i>
+                <span class="text-2xl font-black tracking-tight">TuLiga</span>
             </div>
             
-            <div class="config-section" id="player-form-section">
-                <h3 id="form-title">Agregar Jugador al Plantel</h3>
-                <input type="hidden" id="edit-player-id" value="">
-                <div class="form-grid">
-                    <input type="text" id="player-firstname" placeholder="Nombre">
-                    <input type="text" id="player-lastname" placeholder="Apellido">
-                </div>
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>Documento de Identidad (C.I.)</label>
-                        <input type="text" id="player-ci" placeholder="Ej: 6.153.765-8">
-                    </div>
-                    <div class="input-group">
-                        <label>N° Camiseta</label>
-                        <input type="number" id="player-number" placeholder="Ej: 10" min="1" max="99">
-                    </div>
-                </div>
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>F. Nacimiento</label>
-                        <input type="date" id="player-birthdate">
-                    </div>
-                    <div class="input-group">
-                        <label>Vence Ficha Médica</label>
-                        <input type="date" id="player-medical">
-                    </div>
-                </div>
-                <button class="btn-primary" style="margin-top: 10px;" id="btn-submit-player" onclick="savePlayerProcess()">Guardar Jugador</button>
-                <span id="cancel-edit-btn" class="cancel-edit-lnk" style="display:none;" onclick="clearPlayerForm()">Cancelar Edición</span>
+            <!-- Selector de Categoría / Plantel -->
+            <div class="flex items-center space-x-2 bg-blue-700 px-3 py-1.5 rounded-lg border border-blue-500">
+                <i data-lucide="users" class="w-4 h-4 text-blue-200"></i>
+                <select id="teamSelector" onchange="changeTeam()" class="bg-transparent text-white font-semibold focus:outline-none cursor-pointer">
+                    <!-- Dinámico -->
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- MENÚ DE PESTAÑAS (TABS) -->
+    <nav class="bg-white border-b border-gray-200 sticky top-[56px] z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-2 flex space-x-1 overflow-x-auto scrollbar-none">
+            <button onclick="switchTab('partidos')" id="tab-partidos" class="tab-btn px-4 py-3 font-medium text-sm flex items-center space-x-2 border-b-2 border-blue-600 text-blue-600">
+                <i data-lucide="calendar" class="w-4 h-4"></i>
+                <span>Partidos</span>
+            </button>
+            <button onclick="switchTab('jugadores')" id="tab-jugadores" class="tab-btn px-4 py-3 font-medium text-sm flex items-center space-x-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                <i data-lucide="contact" class="w-4 h-4"></i>
+                <span>Plantel</span>
+            </button>
+            <button onclick="switchTab('asistencia')" id="tab-asistencia" class="tab-btn px-4 py-3 font-medium text-sm flex items-center space-x-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+                <span>Asistencia Prácticas</span>
+            </button>
+            <button onclick="switchTab('estadisticas')" id="tab-estadisticas" class="tab-btn px-4 py-3 font-medium text-sm flex items-center space-x-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                <i data-lucide="trending-up" class="w-4 h-4"></i>
+                <span>Estadísticas</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+        
+        <!-- ================= PESTAÑA: PARTIDOS ================= -->
+        <section id="content-partidos" class="tab-content block space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <i data-lucide="swatch_book" class="w-5 h-5 text-blue-600"></i> Historial de Citaciones
+                </h2>
+                <button onclick="openMatchModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-4 py-2 rounded-lg flex items-center space-x-2 transition shadow-sm">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Nueva Fecha</span>
+                </button>
             </div>
 
-            <div class="config-section">
-                <h3>Jugadores del Plantel Seleccionado</h3>
-                <div id="config-players-list"></div>
+            <!-- Grilla de Tarjetas de Partidos -->
+            <div id="matchesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Se rellena dinámicamente -->
+            </div>
+        </section>
+
+        <!-- ================= PESTAÑA: JUGADORES ================= -->
+        <section id="content-jugadores" class="tab-content hidden space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <i data-lucide="shield" class="w-5 h-5 text-blue-600"></i> Fichas del Plantel
+                </h2>
+                <button onclick="openPlayerModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-4 py-2 rounded-lg flex items-center space-x-2 transition shadow-sm">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i>
+                    <span>Añadir Niño</span>
+                </button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-3">Dorsal</th>
+                                <th class="px-6 py-3">Nombre Completo</th>
+                                <th class="px-6 py-3">Cédula de Identidad</th>
+                                <th class="px-6 py-3">F. Nacimiento</th>
+                                <th class="px-6 py-3">Vence Carnet</th>
+                                <th class="px-6 py-3 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="playersTableBody" class="divide-y divide-gray-100 text-sm text-gray-700">
+                            <!-- Dinámico -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PESTAÑA: ASISTENCIA PRÁCTICAS ================= -->
+        <section id="content-asistencia" class="tab-content hidden space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <i data-lucide="check-square" class="w-5 h-5 text-blue-600"></i> Control de Entrenamientos
+                </h2>
+                <button onclick="addPracticeDate()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-4 py-2 rounded-lg flex items-center space-x-2 transition shadow-sm">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Nueva Práctica</span>
+                </button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr id="attendanceHeader" class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-3 sticky left-0 bg-gray-50 min-w-[200px]">Niño</th>
+                                <!-- Columnas de fechas dinámicas -->
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody" class="divide-y divide-gray-100 text-sm text-gray-700">
+                            <!-- Dinámico -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PESTAÑA: ESTADÍSTICAS ================= -->
+        <section id="content-estadisticas" class="tab-content hidden space-y-6">
+            <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <i data-lucide="pie-chart" class="w-5 h-5 text-blue-600"></i> Resumen General de Citaciones
+            </h2>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-3">Niño</th>
+                                <th class="px-6 py-3 text-center">Partidos Jugados</th>
+                                <th class="px-6 py-3 text-center">Ausencias / Rotación</th>
+                                <th class="px-6 py-3 text-center">Total Convocatorias</th>
+                                <th class="px-6 py-3">Ratio de Presencia</th>
+                            </tr>
+                        </thead>
+                        <tbody id="statsTableBody" class="divide-y divide-gray-100 text-sm text-gray-700">
+                            <!-- Dinámico -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ================================================================= -->
+    <!-- VENTANAS MODALES (FORMULARIOS OCULTOS) -->
+    <!-- ================================================================= -->
+
+    <!-- MODAL: DETALLE / EDICIÓN DE PARTIDO (CONVOCATORIA) -->
+    <div id="matchModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50 backdrop-blur-xs">
+        <div class="bg-white rounded-xl shadow-xl max-w-xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 id="matchModalTitle" class="text-lg font-bold text-gray-900">Configurar Citación</h3>
+                <button onclick="closeMatchModal()" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Nombre de la Fecha / Partido</label>
+                    <input type="text" id="matchNameInput" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" placeholder="Ej: Apertura - 4ta Fecha">
+                </div>
+                <hr class="border-gray-200">
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Lista de Convocados</span>
+                        <div class="flex space-x-2">
+                            <button onclick="bulkSelectMatch(true)" class="text-xs text-blue-600 hover:underline">Citar Todos</button>
+                            <span class="text-gray-300">|</span>
+                            <button onclick="bulkSelectMatch(false)" class="text-xs text-red-600 hover:underline">Limpiar</button>
+                        </div>
+                    </div>
+                    <div id="matchPlayersList" class="space-y-1.5 divide-y divide-gray-50 max-h-[40vh] overflow-y-auto pr-1">
+                        <!-- Dinámico -->
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end space-x-2">
+                <button onclick="closeMatchModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100">Cancelar</button>
+                <button onclick="saveMatch()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium shadow-sm">Guardar Cambios</button>
             </div>
         </div>
     </div>
 
+    <!-- MODAL: FICHA JUGADOR -->
+    <div id="playerModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50 backdrop-blur-xs">
+        <div class="bg-white rounded-xl shadow-xl max-w-md w-full overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 id="playerModalTitle" class="text-lg font-bold text-gray-900">Ficha del Niño</h3>
+                <button onclick="closePlayerModal()" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <input type="hidden" id="playerIdInput">
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="col-span-2">
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Nombre</label>
+                        <input type="text" id="playerFirstname" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Dorsal</label>
+                        <input type="text" id="playerNumber" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500" placeholder="Nº">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Apellido</label>
+                    <input type="text" id="playerLastname" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Cédula de Identidad</label>
+                    <input type="text" id="playerCi" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500" placeholder="X.XXX.XXX-X">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">F. Nacimiento</label>
+                        <input type="date" id="playerBirthdate" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Vence Carnet Med.</label>
+                        <input type="date" id="playerMedical" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end space-x-2">
+                <button onclick="closePlayerModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100">Cancelar</button>
+                <button onclick="savePlayer()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium shadow-sm">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="bg-white border-t border-gray-200 py-4 mt-12 text-center text-xs text-gray-400">
+        &copy; 2026 TuLiga App. Control operativo de canchas y planillas.
+    </footer>
+
+    <!-- LÓGICA DE CONTROL DE DATOS (JAVASCRIPT) -->
     <script>
+        // Variables globales del estado
         let teamsList = [];
         let currentTeam = "";
-        let players = [], dates = [], attendance = {};
-        let matchesList = [], matchesData = {};
-        let clubsLeague = []; 
-        let finalSelection = {};
-        let rankedPlayersList = [];
+        let players = [];
+        let practiceDates = [];
+        let attendance = {};
+        let matchesList = [];
+        let matchesData = {};
+        
+        let editingMatchIndex = null; 
+
+        // Inicializador del sistema
+        window.addEventListener('DOMContentLoaded', () => {
+            initData();
+            lucide.createIcons();
+        });
 
         function initData() {
-            try {
-                if (localStorage.getItem('tuliga_teams_list')) {
-                    teamsList = JSON.parse(localStorage.getItem('tuliga_teams_list'));
-                    currentTeam = localStorage.getItem('tuliga_current_team');
-                    clubsLeague = JSON.parse(localStorage.getItem('tuliga_clubs_league')) || [];
-                } else {
-                    loadOfficialData();
-                    return;
-                }
-                if (clubsLeague.length === 0 || !clubsLeague[0].hasOwnProperty('location')) loadDefaultClubs();
+            // Nota Rodrigo: Forzamos la carga inicial del historial real si no existe la marca
+            if (!localStorage.getItem('tuliga_official_loaded_v2')) {
+                loadOfficialData();
+                localStorage.setItem('tuliga_official_loaded_v2', 'true');
+                return;
+            }
+
+            teamsList = JSON.parse(localStorage.getItem('tuliga_teams_list')) || [];
+            currentTeam = localStorage.getItem('tuliga_current_team') || "";
+
+            if (teamsList.length === 0) {
+                loadOfficialData();
+            } else {
                 loadTeamSpecificData(currentTeam);
                 renderTeamSelector();
-            } catch(e) {
-                localStorage.clear();
-                loadOfficialData();
             }
         }
 
-        function loadDefaultClubs() {
-            clubsLeague = [
-                { name: "Unión de Empalme Olmos", type: "Ambos", location: "Cancha Unión, Empalme Olmos" },
-                { name: "Academia Forlán", type: "Mixto", location: "Complejo Familia Forlán" },
-                { name: "Atlántida Juniors", type: "Ambos", location: "Ruta 11 Km 163, Atlántida" },
-                { name: "Huracán del Pinar", type: "Ambos", location: "Av. Giannattasio Km 28.500, El Pinar" },
-                { name: "Neptunia Country Club", type: "Ambos", location: "Ruta Interbalnearia Km 36, Neptunia" },
-                { name: "Parque del Plata", type: "Ambos", location: "Av. Mario Ferreira, Parque del Plata" }
-            ];
-            clubsLeague.sort((a,b) => a.name.localeCompare(b.name));
-            localStorage.setItem('tuliga_clubs_league', JSON.stringify(clubsLeague));
-        }
-
+        // REGISTRO HISTÓRICO CARGADO DESDE LAS PLANILLAS DE LAS IMÁGENES
         function loadOfficialData() {
             teamsList = ["Categoría 2015"];
             currentTeam = "Categoría 2015";
@@ -464,6 +295,7 @@
             localStorage.setItem('tuliga_current_team', currentTeam);
             loadDefaultClubs();
 
+            // ID estructurados mapeando fielmente la lista de las capturas
             const officialPlayers = [
                 { id: "p_15", firstname: "Benjamin", lastname: "González", ci: "6.127.763-2", birthdate: "", medical: "", number: "15" },
                 { id: "p_12", firstname: "Benjamin", lastname: "Morales", ci: "6.178.483-7", birthdate: "2015-11-26", medical: "2025-08-14", number: "13" },
@@ -487,9 +319,112 @@
             const demoAttendance = {};
             demoDates.forEach(d => { demoAttendance[d] = {}; officialPlayers.forEach(p => { demoAttendance[d][p.id] = 1; }); });
             
-            const demoMatches = ["2026-06-06 | vs Academia Forlán (Mixto) [Local] - 16:00 hs"];
-            const demoMatchesData = { "2026-06-06 | vs Academia Forlán (Mixto) [Local] - 16:00 hs": {} };
-            officialPlayers.forEach(p => { demoMatchesData["2026-06-06 | vs Academia Forlán (Mixto) [Local] - 16:00 hs"][p.id] = { present: 1, sancion: "Ninguna" }; });
+            // Orden correlativo de fechas presentes en las imágenes (image_4a8ec0.png e image_4a8686.png)
+            const demoMatches = [
+                "Prep - 1er Fecha",
+                "Prep - 2da Fecha",
+                "Prep - 3ra Fecha",
+                "Apertura - 1er Fecha",
+                "Apertura - 2da Fecha (A)",
+                "Apertura - 2da Fecha (B)",
+                "Apertura - 2da Fecha (C)",
+                "Apertura - 2da Fecha (D)",
+                "Apertura - 2da Fecha (E)"
+            ];
+
+            // Mapeo binario preciso: checks verdes = 1, casillas rojas = 0
+            const demoMatchesData = {
+                "Prep - 1er Fecha": {
+                    "p_15": { present: 0, sancion: "Ninguna" }, "p_12": { present: 0, sancion: "Ninguna" },
+                    "p_1":  { present: 1, sancion: "Ninguna" }, "p_16": { present: 1, sancion: "Ninguna" },
+                    "p_13": { present: 1, sancion: "Ninguna" }, "p_4":  { present: 1, sancion: "Ninguna" },
+                    "p_9":  { present: 1, sancion: "Ninguna" }, "p_8":  { present: 0, sancion: "Ninguna" },
+                    "p_10": { present: 1, sancion: "Ninguna" }, "p_7":  { present: 1, sancion: "Ninguna" },
+                    "p_6":  { present: 1, sancion: "Ninguna" }, "p_14": { present: 0, sancion: "Ninguna" },
+                    "p_3":  { present: 1, sancion: "Ninguna" }, "p_2":  { present: 1, sancion: "Ninguna" },
+                    "p_5":  { present: 1, sancion: "Ninguna" }, "p_11": { present: 1, sancion: "Ninguna" }
+                },
+                "Prep - 2da Fecha": {
+                    "p_15": { present: 1, sancion: "Ninguna" }, "p_12": { present: 1, sancion: "Ninguna" },
+                    "p_1":  { present: 1, sancion: "Ninguna" }, "p_16": { present: 1, sancion: "Ninguna" },
+                    "p_13": { present: 1, sancion: "Ninguna" }, "p_4":  { present: 1, sancion: "Ninguna" },
+                    "p_9":  { present: 1, sancion: "Ninguna" }, "p_8":  { present: 1, sancion: "Ninguna" },
+                    "p_10": { present: 1, sancion: "Ninguna" }, "p_7":  { present: 1, sancion: "Ninguna" },
+                    "p_6":  { present: 0, sancion: "Ninguna" }, "p_14": { present: 0, sancion: "Ninguna" },
+                    "p_3":  { present: 0, sancion: "Ninguna" }, "p_2":  { present: 0, sancion: "Ninguna" },
+                    "p_5":  { present: 1, sancion: "Ninguna" }, "p_11": { present: 1, sancion: "Ninguna" }
+                },
+                "Prep - 3ra Fecha": {
+                    "p_15": { present: 0, sancion: "Ninguna" }, "p_12": { present: 0, sancion: "Ninguna" },
+                    "p_1":  { present: 0, sancion: "Ninguna" }, "p_16": { present: 1, sancion: "Ninguna" },
+                    "p_13": { present: 1, sancion: "Ninguna" }, "p_4":  { present: 1, sancion: "Ninguna" },
+                    "p_9":  { present: 1, sancion: "Ninguna" }, "p_8":  { present: 1, sancion: "Ninguna" },
+                    "p_10": { present: 0, sancion: "Ninguna" }, "p_7":  { present: 0, sancion: "Ninguna" },
+                    "p_6":  { present: 1, sancion: "Ninguna" }, "p_14": { present: 1, sancion: "Ninguna" },
+                    "p_3":  { present: 1, sancion: "Ninguna" }, "p_2":  { present: 1, sancion: "Ninguna" },
+                    "p_5":  { present: 1, sancion: "Ninguna" }, "p_11": { present: 1, sancion: "Ninguna" }
+                },
+                "Apertura - 1er Fecha": {
+                    "p_15": { present: 0, sancion: "Ninguna" }, "p_12": { present: 1, sancion: "Ninguna" },
+                    "p_1":  { present: 1, sancion: "Ninguna" }, "p_16": { present: 1, sancion: "Ninguna" },
+                    "p_13": { present: 1, sancion: "Ninguna" }, "p_4":  { present: 0, sancion: "Ninguna" },
+                    "p_9":  { present: 0, sancion: "Ninguna" }, "p_8":  { present: 1, sancion: "Ninguna" },
+                    "p_10": { present: 1, sancion: "Ninguna" }, "p_7":  { present: 1, sancion: "Ninguna" },
+                    "p_6":  { present: 1, sancion: "Ninguna" }, "p_14": { present: 0, sancion: "Ninguna" },
+                    "p_3":  { present: 1, sancion: "Ninguna" }, "p_2":  { present: 1, sancion: "Ninguna" },
+                    "p_5":  { present: 1, sancion: "Ninguna" }, "p_11": { present: 1, sancion: "Ninguna" }
+                },
+                "Apertura - 2da Fecha (A)": {
+                    "p_15": { present: 1, sancion: "Ninguna" }, "p_12": { present: 1, sancion: "Ninguna" },
+                    "p_1":  { present: 1, sancion: "Ninguna" }, "p_16": { present: 0, sancion: "Ninguna" },
+                    "p_13": { present: 0, sancion: "Ninguna" }, "p_4":  { present: 1, sancion: "Ninguna" },
+                    "p_9":  { present: 1, sancion: "Ninguna" }, "p_8":  { present: 1, sancion: "Ninguna" },
+                    "p_10": { present: 1, sancion: "Ninguna" }, "p_7":  { present: 1, sancion: "Ninguna" },
+                    "p_6":  { present: 1, sancion: "Ninguna" }, "p_14": { present: 0, sancion: "Ninguna" },
+                    "p_3":  { present: 1, sancion: "Ninguna" }, "p_2":  { present: 1, sancion: "Ninguna" },
+                    "p_5":  { present: 1, sancion: "Ninguna" }, "p_11": { present: 0, sancion: "Ninguna" }
+                },
+                "Apertura - 2da Fecha (B)": {
+                    "p_15": { present: 0, sancion: "Ninguna" }, "p_12": { present: 1, sancion: "Ninguna" },
+                    "p_1":  { present: 1, sancion: "Ninguna" }, "p_16": { present: 0, sancion: "Ninguna" },
+                    "p_13": { present: 1, sancion: "Ninguna" }, "p_4":  { present: 1, sancion: "Ninguna" },
+                    "p_9":  { present: 1, sancion: "Ninguna" }, "p_8":  { present: 1, sancion: "Ninguna" },
+                    "p_10": { present: 1, sancion: "Ninguna" }, "p_7":  { present: 1, sancion: "Ninguna" },
+                    "p_6":  { present: 1, sancion: "Ninguna" }, "p_14": { present: 0, sancion: "Ninguna" },
+                    "p_3":  { present: 1, sancion: "Ninguna" }, "p_2":  { present: 0, sancion: "Ninguna" },
+                    "p_5":  { present: 1, sancion: "Ninguna" }, "p_11": { present: 1, sancion: "Ninguna" }
+                },
+                "Apertura - 2da Fecha (C)": {
+                    "p_15": { present: 0, sancion: "Ninguna" }, "p_12": { present: 1, sancion: "Ninguna" },
+                    "p_1":  { present: 1, sancion: "Ninguna" }, "p_16": { present: 0, sancion: "Ninguna" },
+                    "p_13": { present: 1, sancion: "Ninguna" }, "p_4":  { present: 1, sancion: "Ninguna" },
+                    "p_9":  { present: 1, sancion: "Ninguna" }, "p_8":  { present: 1, sancion: "Ninguna" },
+                    "p_10": { present: 1, sancion: "Ninguna" }, "p_7":  { present: 1, sancion: "Ninguna" },
+                    "p_6":  { present: 1, sancion: "Ninguna" }, "p_14": { present: 0, sancion: "Ninguna" },
+                    "p_3":  { present: 1, sancion: "Ninguna" }, "p_2":  { present: 1, sancion: "Ninguna" },
+                    "p_5":  { present: 1, sancion: "Ninguna" }, "p_11": { present: 1, sancion: "Ninguna" }
+                },
+                "Apertura - 2da Fecha (D)": {
+                    "p_15": { present: 0, sancion: "Ninguna" }, "p_12": { present: 1, sancion: "Ninguna" },
+                    "p_1":  { present: 1, sancion: "Ninguna" }, "p_16": { present: 0, sancion: "Ninguna" },
+                    "p_13": { present: 1, sancion: "Ninguna" }, "p_4":  { present: 1, sancion: "Ninguna" },
+                    "p_9":  { present: 1, sancion: "Ninguna" }, "p_8":  { present: 1, sancion: "Ninguna" },
+                    "p_10": { present: 1, sancion: "Ninguna" }, "p_7":  { present: 1, sancion: "Ninguna" },
+                    "p_6":  { present: 1, sancion: "Ninguna" }, "p_14": { present: 0, sancion: "Ninguna" },
+                    "p_3":  { present: 1, sancion: "Ninguna" }, "p_2":  { present: 1, sancion: "Ninguna" },
+                    "p_5":  { present: 0, sancion: "Ninguna" }, "p_11": { present: 1, sancion: "Ninguna" }
+                },
+                "Apertura - 2da Fecha (E)": {
+                    "p_15": { present: 1, sancion: "Ninguna" }, "p_12": { present: 1, sancion: "Ninguna" },
+                    "p_1":  { present: 1, sancion: "Ninguna" }, "p_16": { present: 1, sancion: "Ninguna" },
+                    "p_13": { present: 0, sancion: "Ninguna" }, "p_4":  { present: 1, sancion: "Ninguna" },
+                    "p_9":  { present: 1, sancion: "Ninguna" }, "p_8":  { present: 1, sancion: "Ninguna" },
+                    "p_10": { present: 1, sancion: "Ninguna" }, "p_7":  { present: 0, sancion: "Ninguna" },
+                    "p_6":  { present: 1, sancion: "Ninguna" }, "p_14": { present: 0, sancion: "Ninguna" },
+                    "p_3":  { present: 1, sancion: "Ninguna" }, "p_2":  { present: 0, sancion: "Ninguna" },
+                    "p_5":  { present: 0, sancion: "Ninguna" }, "p_11": { present: 1, sancion: "Ninguna" }
+                }
+            };
 
             localStorage.setItem('tuliga_players_' + currentTeam, JSON.stringify(officialPlayers));
             localStorage.setItem('tuliga_dates_' + currentTeam, JSON.stringify(demoDates));
@@ -501,419 +436,425 @@
             renderTeamSelector();
         }
 
+        function loadDefaultClubs() {
+            const defaultClubs = ["CAAMEPA", "Club Pando", "Atlético Canelones", "Estrella del Este"];
+            localStorage.setItem('tuliga_clubs', JSON.stringify(defaultClubs));
+        }
+
         function loadTeamSpecificData(teamName) {
             players = JSON.parse(localStorage.getItem('tuliga_players_' + teamName)) || [];
-            dates = JSON.parse(localStorage.getItem('tuliga_dates_' + teamName)) || [];
+            practiceDates = JSON.parse(localStorage.getItem('tuliga_dates_' + teamName)) || [];
             attendance = JSON.parse(localStorage.getItem('tuliga_attendance_' + teamName)) || {};
             matchesList = JSON.parse(localStorage.getItem('tuliga_matches_list_' + teamName)) || [];
             matchesData = JSON.parse(localStorage.getItem('tuliga_matches_data_' + teamName)) || {};
-            finalSelection = {};
-        }
 
-        function saveData() {
-            localStorage.setItem('tuliga_teams_list', JSON.stringify(teamsList));
-            localStorage.setItem('tuliga_current_team', currentTeam);
-            localStorage.setItem('tuliga_players_' + currentTeam, JSON.stringify(players));
-            localStorage.setItem('tuliga_dates_' + currentTeam, JSON.stringify(dates));
-            localStorage.setItem('tuliga_attendance_' + currentTeam, JSON.stringify(attendance));
-            localStorage.setItem('tuliga_matches_list_' + currentTeam, JSON.stringify(matchesList));
-            localStorage.setItem('tuliga_matches_data_' + currentTeam, JSON.stringify(matchesData));
-            localStorage.setItem('tuliga_clubs_league', JSON.stringify(clubsLeague));
-        }
+            // Ordenar alfabéticamente los jugadores por defecto
+            players.sort((a, b) => a.firstname.localeCompare(b.firstname));
 
-        function getMedicalBadge(medicalDateStr) {
-            if (!medicalDateStr) return `<span class="badge-meta badge-medical-expired">Sin Ficha</span>`;
-            const medicalDate = new Date(medicalDateStr + 'T00:00:00');
-            const today = new Date(); today.setHours(0,0,0,0);
-            return (medicalDate - today) < 0 ? `<span class="badge-meta badge-medical-expired">Ficha Vencida</span>` : `<span class="badge-meta badge-medical-ok">Ficha Ok</span>`;
-        }
-
-        function populateDateSelector() {
-            const selector = document.getElementById('session-date-select');
-            if (selector) {
-                selector.innerHTML = '';
-                dates.forEach(d => {
-                    const opt = document.createElement('option');
-                    opt.value = d; opt.textContent = "Práctica: " + d; selector.appendChild(opt);
-                });
-                if(dates.length > 0) selector.value = dates[dates.length - 1];
-            }
-
-            const mSelector = document.getElementById('match-record-select');
-            const citadosMSelector = document.getElementById('citados-match-selector');
-            
-            if (mSelector) {
-                mSelector.innerHTML = '';
-                matchesList.forEach(m => {
-                    const opt = document.createElement('option');
-                    opt.value = m; opt.textContent = m; mSelector.appendChild(opt);
-                });
-                if(matchesList.length > 0) mSelector.value = matchesList[matchesList.length - 1];
-            }
-
-            if (citadosMSelector) {
-                citadosMSelector.innerHTML = '<option value="">Seleccionar Partido Definido...</option>';
-                matchesList.forEach(m => {
-                    const opt = document.createElement('option');
-                    opt.value = m; opt.textContent = m; citadosMSelector.appendChild(opt);
-                });
-            }
-        }
-
-        function loadAttendanceForSelectedDate() {
-            const selector = document.getElementById('session-date-select');
-            if (!selector) return; const date = selector.value;
-            if (!date) {
-                document.getElementById('attendance-players-container').innerHTML = '<p style="text-align:center;color:#7f8c8d;font-size:14px;padding:20px;">No hay prácticas creadas.</p>';
-                document.getElementById('attendance-summary-bubble').innerHTML = 'Toca "+ Nueva" para arrancar.';
-                return;
-            }
-            if (!attendance[date]) attendance[date] = {};
-            const container = document.getElementById('attendance-players-container');
-            container.innerHTML = ''; let presentCount = 0;
-
-            players.forEach(p => {
-                if (attendance[date][p.id] === undefined) attendance[date][p.id] = 1;
-                const isPresent = attendance[date][p.id] === 1; if (isPresent) presentCount++;
-
-                const row = document.createElement('div');
-                row.className = 'player-row ' + (isPresent ? 'present' : 'absent');
-                row.id = 'row-' + p.id;
-                row.innerHTML = `
-                    <div class="player-info">
-                        <span class="player-name">${p.lastname ? p.lastname + ' ' : ''}${p.firstname}</span>
-                        <div class="player-meta-tag">
-                            ${p.number ? `<span class="badge-meta" style="background:#1e3c72; color:white;">#${p.number}</span>` : ''}
-                            ${getMedicalBadge(p.medical)}
-                        </div>
-                    </div>
-                    <label class="attendance-switch">
-                        <input type="checkbox" ${isPresent ? 'checked' : ''} onchange="toggleAttendance('${date}', '${p.id}', this)">
-                        <span class="slider"></span>
-                    </label>
-                `;
-                container.appendChild(row);
-            });
-            document.getElementById('attendance-summary-bubble').innerHTML = `<strong>Asistencias:</strong> ${presentCount} presentes de ${players.length}.`;
-        }
-
-        function toggleAttendance(date, playerId, checkbox) {
-            attendance[date][playerId] = checkbox.checked ? 1 : 0; saveData();
-            document.getElementById('row-' + playerId).className = 'player-row ' + (checkbox.checked ? 'present' : 'absent');
-        }
-
-        function toggleMatchCreator(show) {
-            const el = document.getElementById('match-creator-form');
-            if (show) { el.classList.add('active'); populateRivalDropdowns(); } else { el.classList.remove('active'); }
-        }
-
-        function populateRivalDropdowns() {
-            const dropdown = document.getElementById('new-match-rival');
-            if(!dropdown) return; dropdown.innerHTML = '';
-            clubsLeague.forEach(club => {
-                if(club.name !== "Unión de Empalme Olmos") {
-                    const opt = document.createElement('option');
-                    opt.value = club.name; opt.textContent = club.name; dropdown.appendChild(opt);
-                }
-            });
-        }
-
-        function saveStructuredMatch() {
-            const rival = document.getElementById('new-match-rival').value;
-            const dateVal = document.getElementById('new-match-date').value;
-            const cond = document.getElementById('new-match-condition').value;
-            const type = document.getElementById('new-match-type').value;
-            const extra = document.getElementById('new-match-extra').value.trim();
-
-            if(!dateVal) { alert("Por favor, selecciona una fecha válida."); return; }
-
-            const matchName = `${dateVal} | vs ${rival} (${type}) [${cond}]${extra ? ' - ' + extra : ''}`;
-            if (matchesList.includes(matchName)) { alert("Este partido ya existe."); return; }
-            
-            matchesList.push(matchName); matchesList.sort();
-            matchesData[matchName] = {};
-            players.forEach(p => { matchesData[matchName][p.id] = { present: 0, sancion: "Ninguna" }; });
-
-            saveData(); populateDateSelector(); toggleMatchCreator(false);
-            document.getElementById('match-record-select').value = matchName;
-            loadMatchRecordForSelected();
-        }
-
-        function loadMatchRecordForSelected() {
-            const selector = document.getElementById('match-record-select');
-            if (!selector) return; const matchName = selector.value;
-            if (!matchName) { document.getElementById('match-players-container').innerHTML = '<p style="text-align:center;color:#7f8c8d;padding:20px;">No hay partidos.</p>'; return; }
-            const container = document.getElementById('match-players-container'); container.innerHTML = '';
-
-            players.forEach(p => {
-                if (!matchesData[matchName][p.id]) matchesData[matchName][p.id] = { present: 0, sancion: "Ninguna" };
-                const isPresent = matchesData[matchName][p.id].present === 1;
-                const row = document.createElement('div');
-                row.className = 'player-row ' + (isPresent ? 'present' : 'absent');
-                row.id = 'match-row-' + p.id;
-                row.innerHTML = `
-                    <div class="player-info"><span class="player-name">${p.firstname} ${p.lastname || ''}</span></div>
-                    <label class="attendance-switch">
-                        <input type="checkbox" ${isPresent ? 'checked' : ''} onchange="toggleMatchAttendance('${matchName}', '${p.id}', this)">
-                        <span class="slider"></span>
-                    </label>
-                `;
-                container.appendChild(row);
-            });
-        }
-
-        function toggleMatchAttendance(matchName, playerId, checkbox) {
-            matchesData[matchName][playerId].present = checkbox.checked ? 1 : 0; saveData();
-            document.getElementById('match-row-' + playerId).className = 'player-row ' + (checkbox.checked ? 'present' : 'absent');
-        }
-
-        function syncMatchDetailsForWhatsApp() {
-            document.getElementById('match-details').value = document.getElementById('citados-match-selector').value;
-        }
-
-        function generateCitadosSuggestion() {
-            const container = document.getElementById('citados-players-container'); container.innerHTML = '';
-            rankedPlayersList = players.map(p => { return { id: p.id, fullObj: p }; });
-            rankedPlayersList.forEach(rp => {
-                if (finalSelection[rp.id] === undefined) finalSelection[rp.id] = false;
-                const row = document.createElement('div');
-                row.className = 'player-row priority-high';
-                row.innerHTML = `
-                    <div class="player-info"><span class="player-name">${rp.fullObj.firstname} ${rp.fullObj.lastname || ''}</span></div>
-                    <label class="attendance-switch">
-                        <input type="checkbox" id="cite-switch-${rp.id}" ${finalSelection[rp.id] ? 'checked' : ''} onchange="finalSelection['${rp.id}'] = this.checked; updateMinMaxUI();">
-                        <span class="slider"></span>
-                    </label>
-                `;
-                container.appendChild(row);
-            });
-            updateMinMaxUI();
-        }
-
-        function autoSelectByCupo() {
-            players.forEach(p => finalSelection[p.id] = true);
-            rankedPlayersList.forEach(rp => { const el = document.getElementById('cite-switch-' + rp.id); if(el) el.checked = true; });
-            updateMinMaxUI();
-        }
-
-        function updateMinMaxUI() {
-            let currentCount = 0; players.forEach(p => { if (finalSelection[p.id]) currentCount++; });
-            document.getElementById('citados-count-alert').className = "alert-bubble alert-success";
-            document.getElementById('citados-count-alert').innerHTML = `Llevas ${currentCount} citados.`;
-        }
-
-        function parseAndCalculateMeetTime(matchString) {
-            const timeRegex = /(\d{1,2})[:.](\d{2})/;
-            const match = matchString.match(timeRegex);
-            if (!match) return null;
-
-            let hours = parseInt(match[1], 10);
-            let minutes = parseInt(match[2], 10);
-            
-            minutes -= 30;
-            if (minutes < 0) {
-                minutes += 60;
-                hours -= 1;
-                if (hours < 0) hours += 24;
-            }
-
-            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')} hs`;
-        }
-
-        // FUNCIÓN ACTUALIZADA: LIMPIEZA DE FORMATO, ELIMINACIÓN DE MIXTO/FEM Y REDUNDANCIAS
-        function copyCitadosToClipboard() {
-            let originalMatchInfo = document.getElementById('match-details').value.trim();
-            let locationString = "";
-            let meetTimeString = "";
-
-            if (!originalMatchInfo) {
-                originalMatchInfo = "Próxima Fecha Oficial";
-            } else {
-                // 1. Calcular hora de citación y remover hora duplicada posterior
-                const meetTime = parseAndCalculateMeetTime(originalMatchInfo);
-                if (meetTime) {
-                    meetTimeString = `⏰ *Hora de encuentro:* ${meetTime}\n`;
-                }
-
-                // 2. Obtener ubicación según localía
-                if (originalMatchInfo.includes("[Visitante]")) {
-                    clubsLeague.forEach(club => {
-                        if (originalMatchInfo.includes(`vs ${club.name}`)) {
-                            locationString = `📍 *Ubicación:* ${club.location || 'No especificada'}\n`;
-                        }
-                    });
-                } else if (originalMatchInfo.includes("[Local]")) {
-                    const miClub = clubsLeague.find(c => c.name === "Unión de Empalme Olmos");
-                    if (miClub) locationString = `📍 *Ubicación:* ${miClub.location || 'Cancha Local'}\n`;
-                }
-
-                // 3. Limpiar string de detalles: quitar tipo (Mixto/Femenino) y cambiar separador
-                originalMatchInfo = originalMatchInfo.replace(/\((Mixto|Femenino)\)\s*/g, "");
-                originalMatchInfo = originalMatchInfo.replace('|', '➔');
-            }
-            
-            let text = `📋 *CONVOCATORIA - ${currentTeam.toUpperCase()}* 📋\n`;
-            text += `📅 *Detalles:* ${originalMatchInfo}\n`;
-            text += meetTimeString;
-            text += locationString;
-            text += `------------------------------------\n`;
-            let count = 1;
-            players.forEach(p => {
-                if (finalSelection[p.id]) {
-                    text += `${count}. ${p.firstname} ${p.lastname || ''}${p.number ? ' (#'+p.number+')' : ''}\n`;
-                    count++;
-                }
-            });
-            text += `------------------------------------\n`;
-            text += `⚠️ Confirmar asistencia. 💪🔥`;
-            
-            navigator.clipboard.writeText(text)
-                .then(() => alert("¡Convocados copiados con el formato limpio!"))
-                .catch(() => alert("Error al copiar."));
-        }
-
-        function renderClubsConfigList() {
-            const container = document.getElementById('config-clubs-list');
-            if(!container) return; container.innerHTML = '';
-            clubsLeague.forEach((club, index) => {
-                const item = document.createElement('div');
-                item.className = 'list-item-row';
-                item.style.fontSize = '12px';
-                let isManager = club.name === "Unión de Empalme Olmos" ? ' <span style="color:#f39c12; font-weight:bold;">⭐ Mi Club</span>' : '';
-                let locStr = club.location ? `<br><span style="color:#7f8c8d; font-size:11px;">📍 ${club.location}</span>` : '';
-                item.innerHTML = `
-                    <div><span><strong>${club.name}</strong>${isManager}</span>${locStr}</div>
-                    <div class="list-actions">
-                        <span class="badge-meta">${club.type}</span>
-                        <button class="btn-edit-action" onclick="startEditClub(${index})">Editar</button>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        function startEditClub(index) {
-            const club = clubsLeague[index];
-            document.getElementById('edit-club-index').value = index;
-            document.getElementById('new-club-name').value = club.name;
-            document.getElementById('new-club-type').value = club.type;
-            document.getElementById('new-club-location').value = club.location || '';
-            document.getElementById('club-form-title').textContent = "Modificar Club: " + club.name;
-            document.getElementById('btn-submit-club').textContent = "Actualizar Club";
-            document.getElementById('club-form-section').classList.add('editing-mode');
-            document.getElementById('cancel-club-edit-btn').style.display = 'inline-block';
-        }
-
-        function clearClubForm() {
-            document.getElementById('edit-club-index').value = "";
-            document.getElementById('new-club-name').value = "";
-            document.getElementById('new-club-type').value = "Mixto";
-            document.getElementById('new-club-location').value = "";
-            document.getElementById('club-form-title').textContent = "Registrar / Editar Club de la Liga";
-            document.getElementById('btn-submit-club').textContent = "Guardar Club";
-            document.getElementById('club-form-section').classList.remove('editing-mode');
-            document.getElementById('cancel-club-edit-btn').style.display = 'none';
-        }
-
-        function saveClubProcess() {
-            const index = document.getElementById('edit-club-index').value;
-            const name = document.getElementById('new-club-name').value.trim();
-            const type = document.getElementById('new-club-type').value;
-            const location = document.getElementById('new-club-location').value.trim();
-            if (!name) return;
-            if (index === "") { clubsLeague.push({ name: name, type: type, location: location }); } 
-            else { const idx = parseInt(index); clubsLeague[idx].name = name; clubsLeague[idx].type = type; clubsLeague[idx].location = location; }
-            clubsLeague.sort((a,b) => a.name.localeCompare(b.name));
-            saveData(); clearClubForm(); renderClubsConfigList();
-        }
-
-        function renderConfigPlayers() {
-            const container = document.getElementById('config-players-list'); container.innerHTML = '';
-            players.forEach(p => {
-                const item = document.createElement('div');
-                item.className = 'list-item-row';
-                item.innerHTML = `<span><strong>${p.firstname}</strong> (#${p.number || 'S/N'})</span>
-                    <div class="list-actions"><button class="btn-edit-action" onclick="startEditPlayer('${p.id}')">Editar</button></div>`;
-                container.appendChild(item);
-            });
-        }
-
-        function startEditPlayer(id) {
-            const player = players.find(p => p.id === id);
-            document.getElementById('edit-player-id').value = player.id;
-            document.getElementById('player-firstname').value = player.firstname;
-            document.getElementById('player-lastname').value = player.lastname || '';
-            document.getElementById('player-number').value = player.number || '';
-            document.getElementById('player-ci').value = player.ci || '';
-            document.getElementById('player-medical').value = player.medical || '';
-            document.getElementById('btn-submit-player').textContent = "Actualizar";
-            document.getElementById('cancel-edit-btn').style.display = 'block';
-        }
-
-        function clearPlayerForm() {
-            document.getElementById('edit-player-id').value = "";
-            document.getElementById('player-firstname').value = "";
-            document.getElementById('player-lastname').value = "";
-            document.getElementById('player-number').value = "";
-            document.getElementById('player-ci').value = "";
-            document.getElementById('player-medical').value = "";
-            document.getElementById('btn-submit-player').textContent = "Guardar Jugador";
-            document.getElementById('cancel-edit-btn').style.display = 'none';
-        }
-
-        function savePlayerProcess() {
-            const id = document.getElementById('edit-player-id').value;
-            const fn = document.getElementById('player-firstname').value.trim();
-            const ln = document.getElementById('player-lastname').value.trim();
-            const num = document.getElementById('player-number').value.trim();
-            const ci = document.getElementById('player-ci').value.trim();
-            const med = document.getElementById('player-medical').value;
-            if(!fn) return;
-            if(id === "") { players.push({ id: "p_"+Date.now(), firstname: fn, lastname: ln, number: num, ci: ci, medical: med }); } 
-            else { const p = players.find(x => x.id === id); p.firstname = fn; p.lastname = ln; p.number = num; p.ci = ci; p.medical = med; }
-            saveData(); clearPlayerForm(); renderConfigPlayers();
-        }
-
-        function addNewTeam() {
-            const name = document.getElementById('new-team-name').value.trim();
-            if(!name) return; teamsList.push(name); currentTeam = name; players = []; dates = []; attendance = {}; matchesList = []; matchesData = {};
-            saveData(); renderTeamSelector(); renderAll(); clearPlayerForm();
+            refreshAllViews();
         }
 
         function renderTeamSelector() {
-            const selector = document.getElementById('global-team-selector'); selector.innerHTML = '';
+            const selector = document.getElementById('teamSelector');
+            selector.innerHTML = '';
             teamsList.forEach(t => {
-                const opt = document.createElement('option'); opt.value = t; opt.textContent = "Plantel: " + t;
-                if (t === currentTeam) opt.selected = true; selector.appendChild(opt);
+                const opt = document.createElement('option');
+                opt.value = t;
+                opt.innerText = t;
+                if (t === currentTeam) opt.selected = true;
+                selector.appendChild(opt);
             });
         }
 
-        function changeActiveTeam() {
-            currentTeam = document.getElementById('global-team-selector').value;
+        function changeTeam() {
+            const val = document.getElementById('teamSelector').value;
+            currentTeam = val;
             localStorage.setItem('tuliga_current_team', currentTeam);
-            loadTeamSpecificData(currentTeam); renderAll();
+            loadTeamSpecificData(currentTeam);
         }
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
-            const buttons = document.querySelectorAll('.tab-btn');
-            buttons.forEach(btn => { if(btn.getAttribute('onclick').includes(tabName)) btn.classList.add('active'); });
-            const viewEl = document.getElementById('view-' + tabName); if (viewEl) viewEl.classList.add('active');
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('text-blue-600', 'border-blue-600');
+                btn.classList.add('text-gray-500', 'border-transparent');
+            });
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.classList.remove('text-gray-500', 'border-transparent');
+            activeBtn.classList.add('text-blue-600', 'border-blue-600');
             
-            if (tabName === 'asistencia') loadAttendanceForSelectedDate();
-            if (tabName === 'citados') generateCitadosSuggestion();
-            if (tabName === 'partidos') { toggleMatchCreator(false); loadMatchRecordForSelected(); }
-            if (tabName === 'config') { renderConfigPlayers(); renderClubsConfigList(); }
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
         }
 
-        function openNewSessionModal() {
-            const name = prompt("Nombre de la práctica:");
-            if(name) { dates.push(name); attendance[name] = {}; players.forEach(p => attendance[name][p.id] = 1); saveData(); populateDateSelector(); loadAttendanceForSelectedDate(); }
+        function refreshAllViews() {
+            renderMatches();
+            renderPlayers();
+            renderAttendance();
+            renderStats();
+            setTimeout(() => { lucide.createIcons(); }, 30);
         }
 
-        function renderAll() { populateDateSelector(); loadAttendanceForSelectedDate(); }
-        window.onload = function() { initData(); renderAll(); };
+        // ================= OPERACIONES DE PARTIDOS =================
+        function renderMatches() {
+            const grid = document.getElementById('matchesGrid');
+            grid.innerHTML = '';
+
+            if (matchesList.length === 0) {
+                grid.innerHTML = `<div class="col-span-full bg-white p-8 rounded-xl text-center text-gray-400 border border-dashed border-gray-300">No hay campeonatos ni fechas registradas.</div>`;
+                return;
+            }
+
+            matchesList.forEach((mName, idx) => {
+                const data = matchesData[mName] || {};
+                let convocadosCount = 0;
+                Object.values(data).forEach(p => { if (p.present === 1) convocadosCount++; });
+
+                const card = document.createElement('div');
+                card.className = "bg-white border border-gray-200 rounded-xl p-5 shadow-xs hover:shadow-md transition flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-gray-900 text-base tracking-tight">${mName}</h3>
+                            <span class="bg-blue-50 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full">${convocadosCount} Citados</span>
+                        </div>
+                        <p class="text-xs text-gray-400 mb-4">Plantel: ${currentTeam}</p>
+                    </div>
+                    <div class="flex space-x-2 pt-2 border-t border-gray-100">
+                        <button onclick="openMatchModal(${idx})" class="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 font-semibold text-xs py-2 rounded-lg border border-gray-200 transition flex items-center justify-center space-x-1">
+                            <i data-lucide="edit-2" class="w-3.5 h-3.5"></i> <span>Modificar</span>
+                        </button>
+                        <button onclick="deleteMatch(${idx})" class="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-lg border border-red-100 transition" title="Eliminar Fecha">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openMatchModal(index = null) {
+            editingMatchIndex = index;
+            const container = document.getElementById('matchPlayersList');
+            container.innerHTML = '';
+
+            if (index !== null) {
+                const mName = matchesList[index];
+                document.getElementById('matchNameInput').value = mName;
+                document.getElementById('matchModalTitle').innerText = "Editar Citación";
+                
+                const mData = matchesData[mName] || {};
+                players.forEach(p => {
+                    const pState = mData[p.id] || { present: 0, sancion: "Ninguna" };
+                    container.appendChild(createMatchPlayerRow(p, pState.present, pState.sancion));
+                });
+            } else {
+                document.getElementById('matchNameInput').value = '';
+                document.getElementById('matchModalTitle').innerText = "Nueva Convocatoria";
+                players.forEach(p => {
+                    container.appendChild(createMatchPlayerRow(p, 1, "Ninguna"));
+                });
+            }
+
+            document.getElementById('matchModal').classList.remove('hidden');
+            document.getElementById('matchModal').classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function createMatchPlayerRow(player, present, sancion) {
+            const div = document.createElement('div');
+            div.className = "flex items-center justify-between py-2 text-sm text-gray-700";
+            div.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <input type="checkbox" data-pid="${player.id}" class="match-chk w-4 h-4 text-blue-600 border-gray-300 rounded-sm focus:ring-blue-500" ${present === 1 ? 'checked' : ''}>
+                    <span class="font-medium">${player.firstname} ${player.lastname}</span>
+                    <span class="text-xs text-gray-400">Nº ${player.number || '-'}</span>
+                </div>
+                <select data-pid="${player.id}" class="match-sancion bg-gray-50 border border-gray-200 rounded-md text-xs px-2 py-1 focus:outline-none">
+                    <option value="Ninguna" ${sancion === 'Ninguna' ? 'selected' : ''}>Ninguna</option>
+                    <option value="Roja" ${sancion === 'Roja' ? 'selected' : ''}>Suspensión</option>
+                    <option value="Lesión" ${sancion === 'Lesión' ? 'selected' : ''}>Lesionado</option>
+                </select>
+            `;
+            return div;
+        }
+
+        function bulkSelectMatch(status) {
+            document.querySelectorAll('.match-chk').forEach(chk => chk.checked = status);
+        }
+
+        function saveMatch() {
+            const name = document.getElementById('matchNameInput').value.trim();
+            if (!name) return alert("Escribe un nombre identificativo para la fecha.");
+
+            let mData = {};
+            document.querySelectorAll('.match-chk').forEach(chk => {
+                const pid = chk.getAttribute('data-pid');
+                const selectSancion = document.querySelector(`.match-sancion[data-pid="${pid}"]`);
+                mData[pid] = {
+                    present: chk.checked ? 1 : 0,
+                    sancion: selectSancion ? selectSancion.value : "Ninguna"
+                };
+            });
+
+            if (editingMatchIndex !== null) {
+                const oldName = matchesList[editingMatchIndex];
+                if (oldName !== name) {
+                    delete matchesData[oldName];
+                }
+                matchesList[editingMatchIndex] = name;
+            } else {
+                if (matchesList.includes(name)) return alert("Ese nombre de fecha ya existe.");
+                matchesList.push(name);
+            }
+
+            matchesData[name] = mData;
+            localStorage.setItem('tuliga_matches_list_' + currentTeam, JSON.stringify(matchesList));
+            localStorage.setItem('tuliga_matches_data_' + currentTeam, JSON.stringify(matchesData));
+
+            closeMatchModal();
+            refreshAllViews();
+        }
+
+        function deleteMatch(idx) {
+            if (!confirm("¿Seguro que quieres borrar este registro histórico de citación?")) return;
+            const name = matchesList[idx];
+            matchesList.splice(idx, 1);
+            delete matchesData[name];
+
+            localStorage.setItem('tuliga_matches_list_' + currentTeam, JSON.stringify(matchesList));
+            localStorage.setItem('tuliga_matches_data_' + currentTeam, JSON.stringify(matchesData));
+            refreshAllViews();
+        }
+
+        function closeMatchModal() {
+            document.getElementById('matchModal').classList.add('hidden');
+            document.getElementById('matchModal').classList.remove('flex');
+        }
+
+        // ================= GESTIÓN DEL PLANTEL JUGADORES =================
+        function renderPlayers() {
+            const tbody = document.getElementById('playersTableBody');
+            tbody.innerHTML = '';
+
+            if (players.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-gray-400">No hay niños agregados a este plantel.</td></tr>`;
+                return;
+            }
+
+            players.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition border-b border-gray-100";
+                tr.innerHTML = `
+                    <td class="px-6 py-4 font-bold text-blue-600">#${p.number || '-'}</td>
+                    <td class="px-6 py-4 font-semibold text-gray-900">${p.firstname} ${p.lastname}</td>
+                    <td class="px-6 py-4 font-mono text-xs text-gray-600">${p.ci || '-'}</td>
+                    <td class="px-6 py-4 text-xs">${p.birthdate || '-'}</td>
+                    <td class="px-6 py-4 text-xs">${p.medical || '<span class="text-red-500 font-medium">Falta</span>'}</td>
+                    <td class="px-6 py-4 text-center space-x-1">
+                        <button onclick="openPlayerModal('${p.id}')" class="text-blue-600 hover:text-blue-800 p-1.5 rounded-md hover:bg-blue-50 transition inline-block"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                        <button onclick="deletePlayer('${p.id}')" class="text-red-600 hover:text-red-800 p-1.5 rounded-md hover:bg-red-50 transition inline-block"><i data-lucide="user-minus" class="w-4 h-4"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openPlayerModal(id = null) {
+            if (id) {
+                const p = players.find(x => x.id === id);
+                document.getElementById('playerIdInput').value = p.id;
+                document.getElementById('playerFirstname').value = p.firstname;
+                document.getElementById('playerLastname').value = p.lastname;
+                document.getElementById('playerCi').value = p.ci;
+                document.getElementById('playerBirthdate').value = p.birthdate;
+                document.getElementById('playerMedical').value = p.medical;
+                document.getElementById('playerNumber').value = p.number;
+                document.getElementById('playerModalTitle').innerText = "Editar Datos del Jugador";
+            } else {
+                document.getElementById('playerIdInput').value = '';
+                document.getElementById('playerFirstname').value = '';
+                document.getElementById('playerLastname').value = '';
+                document.getElementById('playerCi').value = '';
+                document.getElementById('playerBirthdate').value = '';
+                document.getElementById('playerMedical').value = '';
+                document.getElementById('playerNumber').value = '';
+                document.getElementById('playerModalTitle').innerText = "Fichar Nuevo Jugador";
+            }
+            document.getElementById('playerModal').classList.remove('hidden');
+            document.getElementById('playerModal').classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function savePlayer() {
+            const id = document.getElementById('playerIdInput').value;
+            const first = document.getElementById('playerFirstname').value.trim();
+            const last = document.getElementById('playerLastname').value.trim();
+            
+            if (!first || !last) return alert("Nombre y Apellido son obligatorios.");
+
+            const item = {
+                id: id || "p_" + Date.now(),
+                firstname: first,
+                lastname: last,
+                ci: document.getElementById('playerCi').value.trim(),
+                birthdate: document.getElementById('playerBirthdate').value,
+                medical: document.getElementById('playerMedical').value,
+                number: document.getElementById('playerNumber').value.trim()
+            };
+
+            if (id) {
+                const idx = players.findIndex(x => x.id === id);
+                players[idx] = item;
+            } else {
+                players.push(item);
+            }
+
+            localStorage.setItem('tuliga_players_' + currentTeam, JSON.stringify(players));
+            closePlayerModal();
+            refreshAllViews();
+        }
+
+        function deletePlayer(id) {
+            if (!confirm("¿Eliminar este niño del plantel? Se perderán sus estadísticas asociadas.")) return;
+            players = players.filter(x => x.id !== id);
+            localStorage.setItem('tuliga_players_' + currentTeam, JSON.stringify(players));
+            refreshAllViews();
+        }
+
+        function closePlayerModal() {
+            document.getElementById('playerModal').classList.add('hidden');
+            document.getElementById('playerModal').classList.remove('flex');
+        }
+
+        // ================= MATRIZ DE ASISTENCIA PRÁCTICAS =================
+        function renderAttendance() {
+            const header = document.getElementById('attendanceHeader');
+            const tbody = document.getElementById('attendanceTableBody');
+            
+            // Limpiar dinámicos viejos
+            document.querySelectorAll('.attendance-date-col').forEach(el => el.remove());
+            tbody.innerHTML = '';
+
+            practiceDates.forEach(date => {
+                const th = document.createElement('th');
+                th.className = "px-4 py-3 text-center text-xs font-semibold text-gray-500 attendance-date-col min-w-[90px]";
+                th.innerHTML = `
+                    <div class="flex flex-col items-center justify-center">
+                        <span>${date}</span>
+                        <button onclick="deletePracticeDate('${date}')" class="text-red-400 hover:text-red-600 mt-1 text-[10px] uppercase font-bold">Quitar</button>
+                    </div>
+                `;
+                header.appendChild(th);
+            });
+
+            if (players.length === 0) {
+                tbody.innerHTML = `<tr><td class="px-6 py-4 text-gray-400">No hay jugadores para registrar asistencia.</td></tr>`;
+                return;
+            }
+
+            players.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 border-b border-gray-100";
+                
+                let tdHtml = `<td class="px-6 py-3 sticky left-0 bg-white font-medium text-gray-900 border-r border-gray-100 shadow-xs">${p.firstname} ${p.lastname}</td>`;
+                
+                practiceDates.forEach(date => {
+                    const isPresent = (attendance[date] && attendance[date][p.id] === 1);
+                    tdHtml += `
+                        <td class="px-4 py-3 text-center">
+                            <input type="checkbox" onchange="toggleAttendance('${date}', '${p.id}', this.checked)" class="w-4 h-4 text-green-600 border-gray-300 rounded-sm focus:ring-green-500 cursor-pointer" ${isPresent ? 'checked' : ''}>
+                        </td>
+                    `;
+                });
+
+                tr.innerHTML = tdHtml;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addPracticeDate() {
+            const raw = prompt("Ingrese la fecha del entrenamiento (Ej: jue 29/01 o 02/02):");
+            if (!raw) return;
+            const clean = raw.trim();
+            if (practiceDates.includes(clean)) return alert("Esa fecha ya está registrada.");
+
+            practiceDates.push(clean);
+            attendance[clean] = {};
+            players.forEach(p => { attendance[clean][p.id] = 1; }); // Por defecto asisten todos
+
+            localStorage.setItem('tuliga_dates_' + currentTeam, JSON.stringify(practiceDates));
+            localStorage.setItem('tuliga_attendance_' + currentTeam, JSON.stringify(attendance));
+            refreshAllViews();
+        }
+
+        function toggleAttendance(date, pid, isChecked) {
+            if (!attendance[date]) attendance[date] = {};
+            attendance[date][pid] = isChecked ? 1 : 0;
+            localStorage.setItem('tuliga_attendance_' + currentTeam, JSON.stringify(attendance));
+            renderStats(); 
+        }
+
+        function deletePracticeDate(date) {
+            if (!confirm(`¿Eliminar la columna de asistencia del ${date}?`)) return;
+            practiceDates = practiceDates.filter(d => d !== date);
+            delete attendance[date];
+            localStorage.setItem('tuliga_dates_' + currentTeam, JSON.stringify(practiceDates));
+            localStorage.setItem('tuliga_attendance_' + currentTeam, JSON.stringify(attendance));
+            refreshAllViews();
+        }
+
+        // ================= CÁLCULO DE ESTADÍSTICAS MÓDULO CONTROL =================
+        function renderStats() {
+            const tbody = document.getElementById('statsTableBody');
+            tbody.innerHTML = '';
+
+            if (players.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-6 text-center text-gray-400">Agregue jugadores para computar métricas de citación.</td></tr>`;
+                return;
+            }
+
+            const totalMatches = matchesList.length;
+
+            players.forEach(p => {
+                let partidosJugados = 0;
+                let ausencias = 0;
+
+                matchesList.forEach(mName => {
+                    const mData = matchesData[mName] || {};
+                    if (mData[p.id] && mData[p.id].present === 1) {
+                        partidosJugados++;
+                    } else {
+                        ausencias++;
+                    }
+                });
+
+                const ratio = totalMatches > 0 ? Math.round((partidosJugados / totalMatches) * 100) : 0;
+                
+                // Color de barra de progreso adaptativo
+                let barColor = "bg-red-500";
+                if (ratio >= 75) barColor = "bg-green-500";
+                else if (ratio >= 40) barColor = "bg-yellow-500";
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 border-b border-gray-100 text-sm";
+                tr.innerHTML = `
+                    <td class="px-6 py-4 font-semibold text-gray-900">${p.firstname} ${p.lastname}</td>
+                    <td class="px-6 py-4 text-center text-green-600 font-bold">${partidosJugados}</td>
+                    <td class="px-6 py-4 text-center text-gray-500">${ausencias}</td>
+                    <td class="px-6 py-4 text-center font-medium">${totalMatches}</td>
+                    <td class="px-6 py-4 w-1/4">
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-gray-700 min-w-[35px] text-right">${ratio}%</span>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="${barColor} h-2 rounded-full" style="width: ${ratio}%"></div>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
     </script>
 </body>
 </html>
